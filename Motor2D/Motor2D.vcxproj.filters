@@ -100,6 +100,12 @@
     <ClCompile Include="j1Creature.cpp">
       <Filter>Zelda Game\ElementsScene</Filter>
     </ClCompile>
+    <ClCompile Include="Bezier.cpp">
+      <Filter>Zelda Game\Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="CutsceneManager.cpp">
+      <Filter>Zelda Game\CutsceneManager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="j1Window.h">
@@ -215,6 +221,12 @@
     </ClInclude>
     <ClInclude Include="j1Weapon.h">
       <Filter>Zelda Game\ElementsScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Bezier.h">
+      <Filter>Zelda Game\Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="CutsceneManager.h">
+      <Filter>Zelda Game\CutsceneManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
