@@ -42,18 +42,18 @@ public:
 
 	bool Idle();
 
-	bool Walking();
+	bool Walking(float dt);
 
-	bool Move();
+	bool Move(float dt);
 
-	bool Chase();
+	bool Chase(float dt);
 
 	bool Attack();
 
 	bool Die();
 
 	//hit enemy
-	bool Movebyhit();
+	bool Movebyhit(float dt);
 
 private:
 	SoldierType soldier_type;

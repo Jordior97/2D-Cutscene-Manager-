@@ -251,6 +251,9 @@
     <Filter Include="Zelda Game\Modules\GUI">
       <UniqueIdentifier>{fff5abb1-d128-4071-a124-281ad1c0603e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Zelda Game\CutsceneManager">
+      <UniqueIdentifier>{ffd9183e-8ec0-43b0-8aa4-cd95467c859b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\Game\config.xml">

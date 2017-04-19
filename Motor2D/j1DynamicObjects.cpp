@@ -67,10 +67,7 @@ bool DynamicObjects::Update(float dt)
 
 void DynamicObjects::Draw()
 {
-	BROFILER_CATEGORY("Draw_DynObjects", Profiler::Color::Moccasin);
-
 	App->render->Blit(App->entity_elements->texture_dynobjects, position.x, position.y, &rect);
-
 }
 
 bool DynamicObjects::CleanUp()

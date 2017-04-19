@@ -3,7 +3,7 @@
 
   <Link>
     <atlas file="textures/LinkWalkingSprites.png" />
-    <stats hp="74" attack="10" speed="1" pos_x="100" pos_y="90" />
+    <stats hp="74" attack="10" speed="60" pos_x="100" pos_y="90" />
   </Link>
 
   <!--LOAD ITEMS INFO-->

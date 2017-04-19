@@ -57,8 +57,8 @@ public:
 
 	//STATE MACHINE -------
 	bool Idle();
-	bool Walking();
-	bool Move();
+	bool Walking(float dt);
+	bool Move(float dt);
 	bool Hit();
 	bool Attack();
 	bool Interact();

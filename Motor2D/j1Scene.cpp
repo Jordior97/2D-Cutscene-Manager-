@@ -79,168 +79,159 @@ bool j1Scene::PreUpdate()
 // Called each loop iteration
 bool j1Scene::Update(float dt)
 {
-	BROFILER_CATEGORY("Update_Scene", Profiler::Color::DarkGreen)
+	if (ingame == true)
+	{
+		AssignValues(gems, player->gems);
+		AssignValues(bombs, player->bombs);
+		AssignValues(arrows, player->arrows);
 
-		if (ingame == true)
+		player->ShowHearts();
+		force->Hitbox.w = player->charge;
+
+		/*if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
 		{
-			//TODO AssignValues to only interact when picking/droping items
-			AssignValues(gems, player->gems);
-			AssignValues(bombs, player->bombs);
-			AssignValues(arrows, player->arrows);
-			/*if (App->input->GetKey(SDL_SCANCODE_S) == KEY_DOWN) { // provisional heart/damage checker
-				player->GetDamage();
-			}
-			if (App->input->GetKey(SDL_SCANCODE_F) == KEY_DOWN) { // provisional heart container add
-				player->AddHeartContainer();
-			}*/
-
-			player->ShowHearts();
-			force->Hitbox.w = player->charge;
-
-			/*if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
-			{
-				switch_map = 7;
-			}*/
-			
-			/*if (switch_map == 7)
-			{
-				if (fade == false)
-				{
-					App->fadetoblack->FadeToBlack();
-					fade = true;
-					now_switch = true;
-				}
-
-				if (App->fadetoblack->Checkfadetoblack() && now_switch)
-				{
-					now_switch = false;
-					if (App->map->CleanUp())
-					{
-						App->collision->EreseAllColiderPlayer();
-						if (player->equiped_item != nullptr)
-						{
-							weapon_equiped = player->equiped_item->Wtype;
-						}
-						App->entity_elements->DelteElements();
-						if (enemy.size() > 0)
-						{
-							enemy.clear();
-						}
-						if (items.size() > 0)
-						{
-							items.clear();
-						}
-						if (dynobjects.size() > 0)
-						{
-							dynobjects.clear();
-						}
-						if (pokemons.size() > 0)
-						{
-							pokemons.clear();
-						}
-						if (poketrainer.size() > 0)
-						{
-							poketrainer.clear();
-						}
-					}
-				}
-				if (App->fadetoblack->Checkfadefromblack())
-				{
-					fade = false;
-					switch_map = 0;
-					//Play music
-					//App->audio->PlayMusic("audio/music/POKEMON/PokemonWildPokemonBattle.ogg");
-				}
-			}*/
-
-			if (switch_map != 0 && switch_map != 7)
-			{
-				if (fade == false)
-				{
-					App->fadetoblack->FadeToBlack();
-					gamestate = INMENU;
-					player->SetState(L_IDLE);
-					player->SetAnimState(L_IDLE);
-					fade = true;
-					now_switch = true;
-				}
-
-				if (App->fadetoblack->Checkfadetoblack() && now_switch)
-				{
-					now_switch = false;
-					if (App->map->CleanUp())
-					{
-						App->collision->EreseAllColiderPlayer();
-						if (player->equiped_item != nullptr)
-						{
-							weapon_equiped = player->equiped_item->Wtype;
-						}
-						App->entity_elements->DelteElements();
-						if (enemy.size() > 0)
-						{
-							enemy.clear();
-						}
-						if (items.size() > 0)
-						{
-							items.clear();
-						}
-						if (dynobjects.size() > 0)
-						{
-							dynobjects.clear();
-						}
-						/*if (pokemons.size() > 0)
-						{
-							pokemons.clear();
-						}*/
-
-						if (player->pokedex.size() > 0)
-						{
-							player->pokedex.clear();
-						}
-
-						Load_new_map(switch_map);
-						id_map = switch_map;
-						if (switch_map == 4 && notrepeatmusic)
-						{
-							notrepeatmusic = false;
-							App->audio->PlayMusic("audio/music/POKEMON/PokemonVictoryRoad.ogg");
-						}
-					}
-				}
-				if (App->fadetoblack->Checkfadefromblack())
-				{
-					if (switch_map == 6)
-					{
-						switch_map = 0;
-						fade = false;
-						gamestate = GAMEOVER;
-					}
-					else
-					{
-						switch_map = 0;
-						fade = false;
-						gamestate = INGAME;
-					}
-				}
-			}
-
-			if (switch_menu)
-			{
-				SwitchMenu(!inventory);
-			}
-		}
-
-		/*if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
-		{
-			player->position.x -= 50;
-			App->render->camera.x += 100;
-		}
-		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
-		{
-			player->position.x += 50;
-			App->render->camera.x -= 100;
+			switch_map = 7;
 		}*/
-		
+
+		/*if (switch_map == 7)
+		{
+			if (fade == false)
+			{
+				App->fadetoblack->FadeToBlack();
+				fade = true;
+				now_switch = true;
+			}
+
+			if (App->fadetoblack->Checkfadetoblack() && now_switch)
+			{
+				now_switch = false;
+				if (App->map->CleanUp())
+				{
+					App->collision->EreseAllColiderPlayer();
+					if (player->equiped_item != nullptr)
+					{
+						weapon_equiped = player->equiped_item->Wtype;
+					}
+					App->entity_elements->DelteElements();
+					if (enemy.size() > 0)
+					{
+						enemy.clear();
+					}
+					if (items.size() > 0)
+					{
+						items.clear();
+					}
+					if (dynobjects.size() > 0)
+					{
+						dynobjects.clear();
+					}
+					if (pokemons.size() > 0)
+					{
+						pokemons.clear();
+					}
+					if (poketrainer.size() > 0)
+					{
+						poketrainer.clear();
+					}
+				}
+			}
+			if (App->fadetoblack->Checkfadefromblack())
+			{
+				fade = false;
+				switch_map = 0;
+				//Play music
+				//App->audio->PlayMusic("audio/music/POKEMON/PokemonWildPokemonBattle.ogg");
+			}
+		}*/
+
+		if (switch_map != 0 && switch_map != 7)
+		{
+			if (fade == false)
+			{
+				App->fadetoblack->FadeToBlack();
+				gamestate = INMENU;
+				player->SetState(L_IDLE);
+				player->SetAnimState(L_IDLE);
+				fade = true;
+				now_switch = true;
+			}
+
+			if (App->fadetoblack->Checkfadetoblack() && now_switch)
+			{
+				now_switch = false;
+				if (App->map->CleanUp())
+				{
+					App->collision->EreseAllColiderPlayer();
+					if (player->equiped_item != nullptr)
+					{
+						weapon_equiped = player->equiped_item->Wtype;
+					}
+					App->entity_elements->DelteElements();
+					if (enemy.size() > 0)
+					{
+						enemy.clear();
+					}
+					if (items.size() > 0)
+					{
+						items.clear();
+					}
+					if (dynobjects.size() > 0)
+					{
+						dynobjects.clear();
+					}
+					/*if (pokemons.size() > 0)
+					{
+						pokemons.clear();
+					}*/
+
+					/*if (player->pokedex.size() > 0)
+					{
+						player->pokedex.clear();
+					}*/
+
+					Load_new_map(switch_map);
+					id_map = switch_map;
+					if (switch_map == 4 && notrepeatmusic)
+					{
+						notrepeatmusic = false;
+						App->audio->PlayMusic("audio/music/POKEMON/PokemonVictoryRoad.ogg");
+					}
+				}
+			}
+			if (App->fadetoblack->Checkfadefromblack())
+			{
+				if (switch_map == 6)
+				{
+					switch_map = 0;
+					fade = false;
+					gamestate = GAMEOVER;
+				}
+				else
+				{
+					switch_map = 0;
+					fade = false;
+					gamestate = INGAME;
+				}
+			}
+		}
+
+		if (switch_menu)
+		{
+			SwitchMenu(!inventory);
+		}
+	}
+
+	/*if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
+	{
+		player->position.x -= 50;
+		App->render->camera.x += 100;
+	}
+	if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
+	{
+		player->position.x += 50;
+		App->render->camera.x -= 100;
+	}*/
+
 	return true;
 }
 

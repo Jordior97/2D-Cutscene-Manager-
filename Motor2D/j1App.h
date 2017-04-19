@@ -7,7 +7,6 @@
 #include "j1Timer.h"
 #include <list>
 #include "PugiXml\src\pugixml.hpp"
-#include "Brofiler\Brofiler.h"
 
 // Modules
 class j1Window;

@@ -10,9 +10,6 @@
 // do not add any other libraries here, instead put them in their modules
 #include "SDL/include/SDL.h"
 
-#include "Brofiler\Brofiler.h"
-#pragma comment( lib, "Brofiler/ProfilerCore32.lib" )
-
 #pragma comment( lib, "SDL/libx86/SDL2.lib" )
 #pragma comment( lib, "SDL/libx86/SDL2main.lib" )
 
@@ -38,10 +35,8 @@ int main(int argc, char* args[])
 
 	while(state != EXIT)
 	{
-		BROFILER_FRAME("MAIN");
 		switch(state)
 		{
-
 			// Allocate the engine --------------------------------------------
 			case CREATE:
 			LOG("CREATION PHASE ===============================");

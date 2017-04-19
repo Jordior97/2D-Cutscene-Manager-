@@ -113,8 +113,6 @@ bool j1AnimationManager::CleanUp()
 
 void j1AnimationManager::Drawing_Manager(uint state_id, Direction dir, iPoint position, AnimationElement element)
 {
-	BROFILER_CATEGORY("DrawAnimation", Profiler::Color::DarkMagenta);
-
 	if (dir == UP)
 	{
 		r = animat[element].anim[state_id].North_action.GetCurrentFrame();

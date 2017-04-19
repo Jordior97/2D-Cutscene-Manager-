@@ -72,7 +72,6 @@ bool j1Collision::PreUpdate()
 
 bool j1Collision::Update(float dt)
 {
-	BROFILER_CATEGORY("Update_Collision", Profiler::Color::Orange)
 	// Called before render is available
 	Collider* c1 = nullptr;
 	Collider* c2 = nullptr;

@@ -194,8 +194,6 @@ bool j1App::Update()
 		
 	}
 
-	BROFILER_CATEGORY("UpdateLogic", Profiler::Color::Orchid)
-
 	FinishUpdate();
 	return ret;
 }
@@ -281,8 +279,6 @@ void j1App::FinishUpdate()
 // Call modules before each loop iteration
 bool j1App::PreUpdate()
 {
-	BROFILER_CATEGORY("ProUpdate", Profiler::Color::Orchid)
-
 	bool ret = true;
 	//p2List_item<j1Module*>* item;
 	std::list<j1Module*>::iterator item;
@@ -306,7 +302,6 @@ bool j1App::PreUpdate()
 // Call modules on each loop iteration
 bool j1App::DoUpdate()
 {
-	BROFILER_CATEGORY("DoUpdate", Profiler::Color::Blue)
 	bool ret = true;
 	//p2List_item<j1Module*>* item;
 	std::list<j1Module*>::iterator item;
@@ -331,7 +326,6 @@ bool j1App::DoUpdate()
 // Call modules after each loop iteration
 bool j1App::PostUpdate()
 {
-	BROFILER_CATEGORY("PostUpdate", Profiler::Color::Ivory)
 	bool ret = true;
 	//p2List_item<j1Module*>* item;
 	std::list<j1Module*>::iterator item;
