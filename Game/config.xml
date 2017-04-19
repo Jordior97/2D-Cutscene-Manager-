@@ -6,7 +6,7 @@
 	</app>
   
 	<renderer>
-		<vsync value="true" />
+		<vsync value="true"/>
 	</renderer>
   
 	<font>
@@ -34,6 +34,10 @@
     <!--id= 0--> <file file="animation/LinkAnimations.xml"/> 
     <!--id= 1--> <file file="animation/Enemies.xml"/>
 	</animation>
+
+  <cutscenes>
+    <!--id= 0--> <file file="cutscenes/HelloWorld.xml"/>
+  </cutscenes>
   
 	<window>
     <resolution width="640" height="480" scale="2" />
@@ -52,7 +56,6 @@
 	</map>
 
   <inputManager>
-    
     <!--Move UP-->
     <action  button="11" event="1" />
 
@@ -87,8 +90,7 @@
     <action  button="9"  event="11" />
 
     <!--Button RB-->
-    <action  button="10"  event="12" />
-    
+    <action  button="10"  event="12" /> 
   </inputManager>
   
 </config>
