@@ -35,9 +35,9 @@
     <!--id= 1--> <file file="animation/Enemies.xml"/>
 	</animation>
 
-  <cutscenes>
+  <cutscenemanager>
     <!--id= 0--> <file file="cutscenes/HelloWorld.xml"/>
-  </cutscenes>
+  </cutscenemanager>
   
 	<window>
     <resolution width="640" height="480" scale="2" />

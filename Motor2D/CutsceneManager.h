@@ -6,17 +6,21 @@
 #include <vector>
 
 class SceneElement;
+class j1Timer;
 
 class Cutscene
 {
 public:
-	Cutscene();
-	~Cutscene();
+	//Cutscene();
+	//~Cutscene();
 
+	std::string name;						//Name of the cutscenes
 private:
-	std::vector<SceneElement*> elements;	//Elements in the controlled by the Cutscene
+	uint id;								//ID to locate when triggered
+	std::vector<SceneElement*> elements;	//Elements in the controlled by the cutscene
 	uint map_id;							//Id to know wich map charge
-	bool finished = false;					//To know if Cutscene is finished
+	bool finished = false;					//To know if Cutscene has finished
+	j1Timer	timer;							//To control reproducing time of the cutscene
 };
 
 
@@ -36,22 +40,25 @@ public:
 	//bool PreUpdate();
 
 	// Called each loop iteration
-	bool Update(float dt);
+	//bool Update(float dt);
 
 	// Called before all Updates
 	//bool PostUpdate();
 
 	// Called before quitting
-	bool CleanUp();
+	//bool CleanUp();
 		
-	void StartCutscene(uint id);	//Through a trigger, starts the adequate cutscene
-	void FinishCutscene();			//Sets to nullptr the active_cutscene pointer
+	//void StartCutscene(uint id);	//Through a trigger, starts the adequate cutscene
+	//void FinishCutscene();			//Sets to nullptr the active_cutscene pointer
 
-	void Clear();
+	//void Clear();
 
 private:
 
+	pugi::xml_node LoadXML(pugi::xml_document& config_file, std::string file) const;
+
 	std::list<Cutscene*> cutscenes;			//container with all cutscenes
+	std::list<std::string> paths;			//container with names of all paths of the cutscenes
 	Cutscene* active_cutscene = nullptr;	//To know wich cutscene is active
 };
 
