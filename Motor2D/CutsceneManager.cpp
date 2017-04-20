@@ -1,5 +1,6 @@
 #include "CutsceneManager.h"
 #include "j1FileSystem.h"
+#include "SceneElements.h"
 #include "p2Log.h"
 
 j1CutSceneManager::j1CutSceneManager()
@@ -90,6 +91,33 @@ bool j1CutSceneManager::Start()
 	return true;
 }
 
+bool j1CutSceneManager::Update(float dt)
+{
+	bool ret = true;
+
+	if (active_cutscene != nullptr)
+	{
+		active_cutscene->Update(dt); //Update elements of the cutscene
+	}
+
+	return ret;
+}
+
+//Set to active the correct cutscene
+bool j1CutSceneManager::ActiveCutscene(uint id)
+{
+	for (std::list<Cutscene*>::iterator it = cutscenes.begin(); it != cutscenes.end(); it++)
+	{
+		if (id == it._Ptr->_Myval->GetID())
+		{
+			active_cutscene = *it;
+			LOG("%s cutscene activated", active_cutscene->name.c_str());
+			return true;
+		}
+	}
+	return false;
+}
+
 pugi::xml_node j1CutSceneManager::LoadXML(pugi::xml_document & config_file, std::string file) const
 {
 	pugi::xml_node ret;
@@ -111,4 +139,26 @@ pugi::xml_node j1CutSceneManager::LoadXML(pugi::xml_document & config_file, std:
 	return ret;
 }
 
+uint Cutscene::GetID() const
+{
+	return id;
+}
 
+bool Cutscene::Start()
+{
+	timer.Start();
+	return true;
+}
+
+bool Cutscene::Update(float dt)
+{
+	bool ret = true;
+	std::list<SceneElement*>::iterator element = elements.begin();
+	while (element != elements.end())
+	{
+		element._Ptr->_Myval->Update(dt);
+		element++;
+	}
+
+	return ret;
+}

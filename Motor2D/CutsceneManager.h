@@ -13,11 +13,26 @@ class Cutscene
 public:
 	//Cutscene();
 	//~Cutscene();
+	bool Start();
+
+	bool Update(float dt);
+
+	//LOAD ELEMENTS FUNCTIONS -------
+	bool LoadEntity(pugi::xml_node&);
+	bool LoadMap(pugi::xml_node&);
+	bool LoadDynObject(pugi::xml_node&);
+	bool LoadItem(pugi::xml_node&);
+	bool LoadMusic(pugi::xml_node&);
+	bool LoadFx(pugi::xml_node&);
+	// ------------------------------
+
+	//UTILITY FUNCTIONS ------
+	uint GetID() const;
 
 	std::string name;						//Name of the cutscenes
 private:
 	uint id;								//ID to locate when triggered
-	std::vector<SceneElement*> elements;	//Elements in the controlled by the cutscene
+	std::list<SceneElement*> elements;		//Elements in the controlled by the cutscene
 	uint map_id;							//Id to know wich map charge
 	bool finished = false;					//To know if Cutscene has finished
 	j1Timer	timer;							//To control reproducing time of the cutscene
@@ -40,7 +55,10 @@ public:
 	//bool PreUpdate();
 
 	// Called each loop iteration
-	//bool Update(float dt);
+	bool Update(float dt);
+
+	//Active a cutscene when an event triggers it
+	bool ActiveCutscene(uint id);
 
 	// Called before all Updates
 	//bool PostUpdate();
