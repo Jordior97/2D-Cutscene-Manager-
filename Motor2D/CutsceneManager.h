@@ -7,33 +7,43 @@
 
 class SceneElement;
 class j1Timer;
+class Image;
+class Text;
 
 class Cutscene
 {
 public:
-	//Cutscene();
-	//~Cutscene();
+	Cutscene();
+	~Cutscene();
 	bool Start();
 
 	bool Update(float dt);
 
 	//LOAD ELEMENTS FUNCTIONS -------
-	bool LoadEntity(pugi::xml_node&);
+	bool LoadNPC(pugi::xml_node&);
 	bool LoadMap(pugi::xml_node&);
 	bool LoadDynObject(pugi::xml_node&);
 	bool LoadItem(pugi::xml_node&);
+	bool LoadImg(pugi::xml_node&);
+	bool LoadText(pugi::xml_node&);
 	bool LoadMusic(pugi::xml_node&);
 	bool LoadFx(pugi::xml_node&);
 	// ------------------------------
 
 	//UTILITY FUNCTIONS ------
 	uint GetID() const;
+	bool isFinished() const;
+	//---------------------
 
 	std::string name;						//Name of the cutscenes
+	uint time = 0;							//Max time of the cutscene
+	uint id = 0;							//ID to locate when triggered
+
 private:
-	uint id;								//ID to locate when triggered
-	std::list<SceneElement*> elements;		//Elements in the controlled by the cutscene
-	uint map_id;							//Id to know wich map charge
+	std::list<SceneElement*> elements;		//Elements controlled by the cutscene
+	std::list<Image*> images;				//Images that will be reproduced
+	std::list<Text*> texts;					//Text to show during the cutscene
+	uint map_id = 0;;						//Id to know wich map charge
 	bool finished = false;					//To know if Cutscene has finished
 	j1Timer	timer;							//To control reproducing time of the cutscene
 };
@@ -59,6 +69,7 @@ public:
 
 	//Active a cutscene when an event triggers it
 	bool ActiveCutscene(uint id);
+	bool DeactivateCutscene();
 
 	// Called before all Updates
 	//bool PostUpdate();

@@ -26,6 +26,7 @@ class j1AnimationManager;
 class j1Collision;
 class j1FadeToBlack;
 class InputManager;
+class j1CutSceneManager;
 
 class j1App
 {
@@ -104,13 +105,13 @@ public:
 	j1Fonts*				font = NULL;
 	j1Gui*					gui = NULL;
 	j1EntityElementScene*	entity_elements = NULL;
+	j1CutSceneManager*		cs_manager = NULL;
 	j1AnimationManager*		anim_manager = NULL;
 	j1Collision*			collision = NULL;
 	j1FadeToBlack*			fadetoblack = NULL;
 
 private:
 
-	//p2List<j1Module*>	modules;
 	std::list<j1Module*> modules;
 	int					argc;
 	char**				args;

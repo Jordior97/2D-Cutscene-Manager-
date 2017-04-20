@@ -19,6 +19,7 @@
 #include "j1InputManager.h"
 #include "CombatManager.h"
 #include "j1AnimationManager.h"
+#include "CutsceneManager.h"
 #include "j1Fonts.h"
 #include "j1Gui.h"
 #include "j1App.h"
@@ -44,6 +45,7 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	gui = new j1Gui();
 	entity_elements = new j1EntityElementScene();
 	anim_manager = new j1AnimationManager();
+	cs_manager = new j1CutSceneManager();
 	collision = new j1Collision();
 	input_manager = new InputManager();
 	fadetoblack = new j1FadeToBlack();
@@ -65,6 +67,7 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(scene);
 
 	//Add managers
+	AddModule(cs_manager);
 	AddModule(anim_manager);
 	AddModule(entity_elements);
 

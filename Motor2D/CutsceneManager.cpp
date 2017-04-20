@@ -3,6 +3,8 @@
 #include "SceneElements.h"
 #include "p2Log.h"
 
+
+// CUTSCEME MANAGER -----------------------------------
 j1CutSceneManager::j1CutSceneManager()
 {
 	name = "cutscenemanager";
@@ -44,7 +46,11 @@ bool j1CutSceneManager::Start()
 
 		//Create temp Cutscene 
 		Cutscene* temp_cutscene = new Cutscene();
-		temp_cutscene->name = cutscene_node.attribute("name").as_string(""); //Sets its name.
+
+		temp_cutscene->id = cutscene_node.attribute("id").as_uint(0);			//Sets its identifier.
+		temp_cutscene->name = cutscene_node.attribute("name").as_string("");	//Sets its name.
+		temp_cutscene->time = cutscene_node.attribute("time").as_uint(0);		//Sets its max time.
+
 
 		//Add all Elements involved in its list
 		elements_node = cutscene_node.child("elements");
@@ -55,10 +61,10 @@ bool j1CutSceneManager::Start()
 			//temp_cutscene->LoadMap(temp);
 		}
 
-		//Load Entity
+		//Load NPCs
 		for (temp = elements_node.child("NPCs").child("npc"); temp != NULL; temp = temp.next_sibling("npc"))
 		{
-			//temp_cutscene->LoadEntity(temp);
+			//temp_cutscene->LoadNPC(temp);
 		}
 
 		//Load DynObjects
@@ -71,6 +77,18 @@ bool j1CutSceneManager::Start()
 		for (temp = elements_node.child("ITEMS").child("item"); temp != NULL; temp = temp.next_sibling("item"))
 		{
 			//temp_cutscene->LoadItem(temp);
+		}
+
+		//Load Items
+		for (temp = elements_node.child("IMAGES").child("image"); temp != NULL; temp = temp.next_sibling("image"))
+		{
+			//temp_cutscene->LoadImg(temp);
+		}
+
+		//Load Items
+		for (temp = elements_node.child("TEXTS").child("text"); temp != NULL; temp = temp.next_sibling("text"))
+		{
+			//temp_cutscene->LoadText(temp);
 		}
 
 		//Load Music
@@ -87,6 +105,7 @@ bool j1CutSceneManager::Start()
 
 		//Add the Cutscene in the list -------------------------
 		cutscenes.push_back(temp_cutscene);
+		LOG("Cutscene '%s' loaded", temp_cutscene->name.c_str());
 	}
 	return true;
 }
@@ -97,7 +116,14 @@ bool j1CutSceneManager::Update(float dt)
 
 	if (active_cutscene != nullptr)
 	{
-		active_cutscene->Update(dt); //Update elements of the cutscene
+		if (active_cutscene->isFinished() == false)
+		{
+			active_cutscene->Update(dt); //Update elements of the cutscene
+		}
+		else
+		{
+			DeactivateCutscene();
+		}
 	}
 
 	return ret;
@@ -111,6 +137,7 @@ bool j1CutSceneManager::ActiveCutscene(uint id)
 		if (id == it._Ptr->_Myval->GetID())
 		{
 			active_cutscene = *it;
+			active_cutscene->Start();
 			LOG("%s cutscene activated", active_cutscene->name.c_str());
 			return true;
 		}
@@ -118,6 +145,24 @@ bool j1CutSceneManager::ActiveCutscene(uint id)
 	return false;
 }
 
+//Set active_cutscene pointer to nullptr
+bool j1CutSceneManager::DeactivateCutscene()
+{
+	bool ret = false;
+	if (active_cutscene != nullptr)
+	{
+		if (active_cutscene->isFinished() == true)
+		{
+			LOG("%s cutscene deactivated", active_cutscene->name.c_str());
+			active_cutscene = nullptr;
+			ret = true;
+		}
+	}
+	return ret;
+}
+
+
+//Read from .xml cutscene file
 pugi::xml_node j1CutSceneManager::LoadXML(pugi::xml_document & config_file, std::string file) const
 {
 	pugi::xml_node ret;
@@ -139,13 +184,31 @@ pugi::xml_node j1CutSceneManager::LoadXML(pugi::xml_document & config_file, std:
 	return ret;
 }
 
+// --------------------------------------------------------
+
+
+// CUTSCENE ----------------------------
 uint Cutscene::GetID() const
 {
 	return id;
 }
 
+bool Cutscene::isFinished() const
+{
+	return finished;
+}
+
+Cutscene::Cutscene()
+{
+}
+
+Cutscene::~Cutscene()
+{
+}
+
 bool Cutscene::Start()
 {
+	finished = false;
 	timer.Start();
 	return true;
 }
@@ -153,12 +216,62 @@ bool Cutscene::Start()
 bool Cutscene::Update(float dt)
 {
 	bool ret = true;
+
 	std::list<SceneElement*>::iterator element = elements.begin();
 	while (element != elements.end())
 	{
 		element._Ptr->_Myval->Update(dt);
 		element++;
 	}
+	if (timer.ReadSec() >= time)
+	{
+		finished = true;
+	}
+
+	float sec = timer.ReadSec();
+	LOG("Reproducing %s cutscene, %.4fs", name.c_str(), sec);
 
 	return ret;
 }
+
+bool Cutscene::LoadNPC(pugi::xml_node &)
+{
+	return false;
+}
+
+bool Cutscene::LoadMap(pugi::xml_node &)
+{
+	return false;
+}
+
+bool Cutscene::LoadDynObject(pugi::xml_node &)
+{
+	return false;
+}
+
+bool Cutscene::LoadItem(pugi::xml_node &)
+{
+	return false;
+}
+
+bool Cutscene::LoadImg(pugi::xml_node &)
+{
+	return false;
+}
+
+bool Cutscene::LoadText(pugi::xml_node &)
+{
+	return false;
+}
+
+bool Cutscene::LoadMusic(pugi::xml_node &)
+{
+	return false;
+}
+
+bool Cutscene::LoadFx(pugi::xml_node &)
+{
+	return false;
+}
+
+//--------------------------------------

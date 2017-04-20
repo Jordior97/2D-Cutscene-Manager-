@@ -20,6 +20,7 @@
 #include "j1FadeToBlack.h"
 #include "j1Collision.h"
 #include "j1Weapon.h"
+#include "CutsceneManager.h"
 
 j1Scene::j1Scene() : j1Module()
 {
@@ -221,16 +222,10 @@ bool j1Scene::Update(float dt)
 		}
 	}
 
-	/*if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
-	{
-		player->position.x -= 50;
-		App->render->camera.x += 100;
-	}
 	if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
 	{
-		player->position.x += 50;
-		App->render->camera.x -= 100;
-	}*/
+		App->cs_manager->ActiveCutscene(0); 
+	}
 
 	return true;
 }
@@ -508,8 +503,6 @@ int j1Scene::IdMap()
 	return id_map;
 
 }
-
-
 
 
 // ---------------------------------------------
