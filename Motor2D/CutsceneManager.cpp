@@ -36,6 +36,7 @@ bool j1CutSceneManager::Start()
 	pugi::xml_document	cutscene_file;
 	pugi::xml_node		cutscene_node;
 	pugi::xml_node		elements_node;
+	pugi::xml_node		steps_node;
 	pugi::xml_node		temp;
 	std::list<std::string>::iterator file = paths.begin();
 
@@ -52,7 +53,7 @@ bool j1CutSceneManager::Start()
 		temp_cutscene->time = cutscene_node.attribute("time").as_uint(0);		//Sets its max time.
 
 
-		//Add all Elements involved in its list
+		//LOAD ELEMENTS INVOLVED IN THE CUTSCENE --------------------------------------------------------------
 		elements_node = cutscene_node.child("elements");
 
 		//Load NPCs
@@ -96,6 +97,17 @@ bool j1CutSceneManager::Start()
 		{
 			temp_cutscene->LoadFx(temp);
 		}
+		// -----------------------------------------------------------------------------------
+
+		// LOAD STEPS --------------
+		steps_node = cutscene_node.child("steps");
+		for (temp = steps_node.child("step"); temp != NULL; temp = temp.next_sibling("step"))
+		{
+			temp_cutscene->LoadStep(temp, temp_cutscene);
+		}
+
+
+		// ---------------------
 
 		//Add the Cutscene in the list -------------------------
 		cutscenes.push_back(temp_cutscene);
@@ -186,6 +198,23 @@ pugi::xml_node j1CutSceneManager::LoadXML(pugi::xml_document & config_file, std:
 uint Cutscene::GetID() const
 {
 	return id;
+}
+
+CS_Element* Cutscene::GetElement(const char* name)
+{
+	CS_Element* temp = nullptr;
+
+	//Iterates elements list of the cutscene to find the correct element
+	for (std::list<CS_Element*>::iterator it = elements.begin(); it != elements.end(); it++)
+	{
+		if (it._Ptr->_Myval->name == name)
+		{
+			temp = it._Ptr->_Myval;
+			break;
+		}
+	}
+
+	return temp;
 }
 
 bool Cutscene::isFinished() const
@@ -321,6 +350,23 @@ bool Cutscene::LoadFx(pugi::xml_node& node)
 	return false;
 }
 
+
+bool Cutscene::LoadStep(pugi::xml_node& node, Cutscene* cutscene) //Pass the cutscene that it's involved to link
+{
+	bool ret = false;
+	if (node != NULL && cutscene != nullptr)
+	{
+		CS_Step* temp_step = new CS_Step(node.attribute("n").as_int(-1), node.attribute("start").as_int(-1), cutscene);
+
+		temp_step->SetAction(node);
+		temp_step->SetElement(node);
+
+		this->steps.push_back(temp_step);
+		ret = true;
+	}
+	return ret;
+}
+
 //--------------------------------------
 
 
@@ -339,9 +385,8 @@ CS_Element::~CS_Element()
 
 
 //CS STEPS ----------------------------------
-CS_Step::CS_Step(uint start, uint n, CS_Action action, CS_Element* cs_element):start(start), n(n), action(action)
+CS_Step::CS_Step(int n, int start, Cutscene* cutscene):n(n), start(start), cutscene(cutscene)
 {
-	element = cs_element;
 }
 
 CS_Step::~CS_Step()
@@ -365,7 +410,6 @@ bool CS_Step::PerformAction(float dt)
 	default:
 		action_name = "none";
 		break;
-
 	}
 
 	LOG("Step '%i' started at '%.3f' performing '%s' on '%s'", n, start, action_name.c_str(), element->name.c_str());
@@ -385,6 +429,36 @@ void CS_Step::StartStep()
 void CS_Step::FinishStep()
 {
 	active = false;
+}
+
+//Set the action programmed to that step that will execute the linked element
+void CS_Step::SetAction(pugi::xml_node& node)
+{
+	std::string action_type = node.child("element").attribute("action").as_string("");
+
+	if (action_type == "enable")
+	{
+		action = ACT_ENABLE;
+	}
+	else if (action_type == "disable")
+	{
+		action = ACT_DISABLE;
+	}
+	else if (action_type == "move")
+	{
+		action = ACT_MOVE;
+	}
+	else
+	{
+		action = ACT_NONE;
+	}
+}
+
+//Link the element of the cutscene with the step
+void CS_Step::SetElement(pugi::xml_node& node)
+{
+	std::string element_name = node.child("element").attribute("name").as_string("");
+	element = cutscene->GetElement(element_name.c_str()); 
 }
 
 bool CS_Step::isActive() const

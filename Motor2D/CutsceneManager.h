@@ -10,6 +10,7 @@ enum CS_Type { CS_IMAGE, CS_TEXT, CS_NPC, CS_DYNOBJECT, CS_ITEM, CS_MUSIC, CS_FX
 enum CS_Action { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_NONE };
 
 class j1Timer;
+class Cutscene;
 
 
 class CS_Image
@@ -44,22 +45,26 @@ private:
 class CS_Step
 {
 public:
-	CS_Step(uint start, uint n, CS_Action action, CS_Element* element);
+	CS_Step(int n, int start, Cutscene* cutscene);
 	virtual ~CS_Step();
 
 	bool PerformAction(float dt);
 
-	//UTILITY FUNCTIONS ------------
-	uint GetStartTime() const;
-
 	//STEP FUNCTIONS -----
 	void StartStep();
 	void FinishStep();
+	void SetElement(pugi::xml_node&);
+	void SetAction(pugi::xml_node&);
+
+	//UTILITY FUNCTIONS ------------
+	uint GetStartTime() const;
 	bool isActive() const;
 
+
 private:
-	uint n = 0;						//Number to manage an order
-	uint start = 0;					//Time to start the step
+	Cutscene* cutscene = nullptr;	//Pointer to the cutscene that it is integrated
+	int n = -1;						//Number to manage an order
+	int start = -1;					//Time to start the step
 	CS_Action action = ACT_NONE;	//Action to perform
 	CS_Element*	element = nullptr;	//Element to apply the action
 	bool active = false;
@@ -76,7 +81,6 @@ public:
 
 	//LOAD ELEMENTS FUNCTIONS -------
 	bool LoadNPC(pugi::xml_node&);
-	bool LoadMap(pugi::xml_node&);
 	bool LoadDynObject(pugi::xml_node&);
 	bool LoadItem(pugi::xml_node&);
 	bool LoadImg(pugi::xml_node&);
@@ -85,12 +89,17 @@ public:
 	bool LoadFx(pugi::xml_node&);
 	// ------------------------------
 
+	//LOAD STEPS FUNCTIONS ---
+	bool LoadStep(pugi::xml_node&, Cutscene* cutscene);
+	//--------------
+
 	//MAP -------------
 	//bool SetMap(uint id);
 	//---------------------
 
 	//UTILITY FUNCTIONS ------
 	uint GetID() const;
+	CS_Element* GetElement(const char* name);
 	bool isFinished() const;
 	//---------------------
 
