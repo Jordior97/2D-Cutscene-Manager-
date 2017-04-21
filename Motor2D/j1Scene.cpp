@@ -224,7 +224,7 @@ bool j1Scene::Update(float dt)
 
 	if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
 	{
-		App->cs_manager->ActiveCutscene(0); 
+		App->cs_manager->StartCutscene(0); 
 	}
 
 	return true;

@@ -122,7 +122,7 @@ bool j1CutSceneManager::Update(float dt)
 		}
 		else
 		{
-			DeactivateCutscene();
+			FinishCutscene();
 		}
 	}
 
@@ -130,7 +130,7 @@ bool j1CutSceneManager::Update(float dt)
 }
 
 //Set to active the correct cutscene
-bool j1CutSceneManager::ActiveCutscene(uint id)
+bool j1CutSceneManager::StartCutscene(uint id)
 {
 	for (std::list<Cutscene*>::iterator it = cutscenes.begin(); it != cutscenes.end(); it++)
 	{
@@ -146,7 +146,7 @@ bool j1CutSceneManager::ActiveCutscene(uint id)
 }
 
 //Set active_cutscene pointer to nullptr
-bool j1CutSceneManager::DeactivateCutscene()
+bool j1CutSceneManager::FinishCutscene()
 {
 	bool ret = false;
 	if (active_cutscene != nullptr)
@@ -187,6 +187,7 @@ pugi::xml_node j1CutSceneManager::LoadXML(pugi::xml_document & config_file, std:
 // --------------------------------------------------------
 
 
+
 // CUTSCENE ----------------------------
 uint Cutscene::GetID() const
 {
@@ -217,12 +218,27 @@ bool Cutscene::Update(float dt)
 {
 	bool ret = true;
 
-	std::list<SceneElement*>::iterator element = elements.begin();
-	while (element != elements.end())
+	//Iterate the steps of the cutscene to update the active ones
+	std::list<CS_Step*>::iterator temp = steps.begin();
+	while (temp != steps.end())
 	{
-		element._Ptr->_Myval->Update(dt);
-		element++;
+		CS_Step* step = *temp;
+
+		//Init the step
+		if (timer.ReadSec() >= step->GetStartTime())
+		{
+			step->StartStep();
+		}
+
+		//Update the state to perform its action
+		if (step->isActive() == true)
+		{
+			step->PerformAction(dt);
+		}
+
+		temp++;
 	}
+
 	if (timer.ReadSec() >= time)
 	{
 		finished = true;
@@ -275,3 +291,68 @@ bool Cutscene::LoadFx(pugi::xml_node &)
 }
 
 //--------------------------------------
+
+
+//CS ELEMENTS ------------------------------
+CS_Element::CS_Element(CS_Type type, bool active, uint id, const char* path):type(type),active(active),id(id),path(path)
+{
+}
+
+CS_Element::~CS_Element()
+{
+}
+
+
+//CS STEPS ----------------------------------
+CS_Step::CS_Step(uint start, uint id, CS_Action action, CS_Element* cs_element):start(start), id(id), action(action)
+{
+	element = cs_element;
+}
+
+CS_Step::~CS_Step()
+{
+}
+
+bool CS_Step::PerformAction(float dt)
+{
+	std::string action_name;
+	switch (action)
+	{
+	case ACT_DISABLE:
+		action_name = "disable";
+		break;
+	case ACT_ENABLE:
+		action_name = "enable";
+		break;
+	case ACT_MOVE:
+		action_name = "move";
+		break;
+	default:
+		action_name = "NONE";
+		break;
+
+	}
+
+	LOG("Step '%i' started at '%.3f' performing '%s' on '%s'", id, start, action);
+	return true;
+}
+
+uint CS_Step::GetStartTime() const
+{
+	return start;
+}
+
+void CS_Step::StartStep()
+{
+	active = true;
+}
+
+void CS_Step::FinishStep()
+{
+	active = false;
+}
+
+bool CS_Step::isActive() const
+{
+	return active;
+}
