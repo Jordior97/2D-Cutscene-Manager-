@@ -9,7 +9,7 @@ Before starting to program, let's talk about some introduction concepts.
 It’s a video sequence where the player doesn’t have the control (or it’s limited), and it has multiple functions:
 
 -	Makes advance the plot.
-- Presents new characters.
+- 	Presents new characters.
 -	Provides crucial information (dialogues, clues, background information…).
 -	And more.
 
@@ -74,7 +74,7 @@ class j1CutSceneManager : public j1Module
 	bool FinishCutscene(); 	//Deactive the active cutscene
 
 	list<Cutscene*> cutscenes;  //container with all cutscenes
-	list<std::string> paths;  //container with names of all paths of the cutscenes
+	list<std::string> paths;  //container with names of all .xml paths of the cutscenes
 	Cutscene* active_cutscene = nullptr;  //To know wich cutscene is reproduced at the moment
 };
 ```
@@ -105,12 +105,80 @@ class Cutscene
 
 **ELEMENTS:** game objects that will be controlled by the cutscene during its reproduction.
 
-In my case, they can be:
+In my case, they can be of different types:
  - IMAGES
  - TEXTS
  - MUSICS
  - SOUND FX
  - NPCs
+ 
+These elements store different, variables depending on its type, that the cutscene can modify through a STEP SYSTEM.
+
+**STEPS:** ordered actions the cutscene will call through its reproduction time. Each step is **linked to an element** of the specific cutscene. It has got also defined a **specified action** that will be applied to the linked object.
+
+Different action types can be defined:
+ - ENABLE
+ - DISABLE
+ - MOVE
+ - PLAY
+ 
+### CUTSCENE XML STRUCTURE
+
+Every cutscene is stored in a different XML file to keep the project organized. The Cutscene Manager contains all the names of these files in a list, so it can access them to create every Cutscene and store its respective data (Elements & Steps). 
+
+Let's see an EXAMPLE:
+```cpp
+<Cutscene name="HelloWorld" id="0">
+
+  <!--LOAD INFO OF EACH ELEMENT THAT ACT IN THE CUTSCENE-->
+  <elements>
+    <MAP id="1" file="TiledLinkHouse.tmx"/>   
+    <NPCs>
+      <npc n="0" name="Link" x="100" y="100" dir="down" state="idle" update="true"/>
+      <npc n="1" name="soldier" x="100" y="120" dir="up" state="idle" update="true"/>
+    </NPCs>
+    <TEXTS>
+      <text n="5" name="text1" text="Hello, what are you doing here?" x="100" y="100" update="false"/>
+      <text n="6" name="text2" text="I'm doing pancakes" x="100" y="100" update ="false"/>
+    </TEXTS>
+    <MUSIC>
+      <music n="7" name="KakarikoVillage" path="audio/music/ZELDA/Zeldakakariko_village.ogg"/>
+    </MUSIC>
+  </elements>
+
+  <!--EXECUTE ALL ACTIONS IN ORDER-->
+  <steps>
+    <step n="0" start="1">
+      <element name="Link" action="move">
+        <movement dest_x ="300" dest_y="300"/>     
+      </element>
+    </step>
+    <step n="1" start="2">
+      <element name="text1" action="enable"/>
+    </step>
+    <step n="2" start="3">
+      <element name="text1" action="disable"/>
+    </step>
+    <step n="3" start="3">
+      <element name="text2" action="enable"/>
+    </step>
+    <step n="4" start="4">
+      <element name="text2" action="disable"/>
+    </step>
+  </steps>
+  
+</Cutscene>
+```
+**1) LOAD ALL ELEMENTS INVOLVED IN THE CUTSCENE TO ITS OWN LIST:** each element, depending on its type, will store different type of variables.
+
+**2) LOAD ALL STEPS IN THE CUTSCENE:** each step time variable (*start*) that determines when it starts. Once activated, it will perform the specified action on the linked element. When the action is completed, the step is done and it won't be updated again.
+ 
+### CUTSCENE REPRODUCTION
+
+When an event triggers a cutscene, the state of the game changes to *CUTSCENE MODE* so the player "loses the control of the game" that will be passed to the Cutscene Manager.
+
+
+
 
 
 
