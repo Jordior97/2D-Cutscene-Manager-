@@ -1,6 +1,7 @@
 #include "CutsceneManager.h"
 #include "j1FileSystem.h"
 #include "SceneElements.h"
+#include "j1Scene.h"
 #include "p2Log.h"
 
 
@@ -146,6 +147,7 @@ bool j1CutSceneManager::StartCutscene(uint id)
 		{
 			active_cutscene = *it;
 			active_cutscene->Start();
+			App->scene->ChangeState(CUTSCENE);
 			LOG("%s cutscene activated", active_cutscene->name.c_str());
 			return true;
 		}
@@ -164,6 +166,7 @@ bool j1CutSceneManager::FinishCutscene()
 			LOG("%s cutscene deactivated", active_cutscene->name.c_str());
 			active_cutscene = nullptr;
 			ret = true;
+			App->scene->ChangeState(INGAME);
 		}
 	}
 	return ret;
@@ -420,6 +423,9 @@ bool CS_Step::DoAction(float dt)
 		case ACT_MOVE:
 			action_name = "move";
 			break;
+		case ACT_PLAY:
+			action_name = "play";
+			break;
 		default:
 			action_name = "none";
 			break;
@@ -432,6 +438,7 @@ bool CS_Step::DoAction(float dt)
 	{
 		FinishStep();
 	}
+
 	return true;
 }
 

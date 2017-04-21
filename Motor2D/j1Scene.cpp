@@ -375,6 +375,14 @@ void j1Scene::SwitchMenu(bool direction)//true for down, false for up
 
 }
 
+void j1Scene::ChangeState(GameState state)
+{
+	if (state >= INGAME && state <= GAMEOVER)
+	{
+		gamestate = state;
+	}
+}
+
 bool j1Scene::Load_new_map(int n)
 {
 	if (player == NULL)
