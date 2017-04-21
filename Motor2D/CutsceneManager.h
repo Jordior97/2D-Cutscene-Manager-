@@ -6,7 +6,7 @@
 #include <vector>
 #include <string>
 
-enum CS_Type { CS_IMAGE, CS_TEXT, CS_NPC, CS_MUSIC, CS_FX, CS_NONE };
+enum CS_Type { CS_IMAGE, CS_TEXT, CS_NPC, CS_DYNOBJECT, CS_ITEM, CS_MUSIC, CS_FX, CS_NONE };
 enum CS_Action { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_NONE };
 
 class j1Timer;
@@ -27,7 +27,8 @@ private:
 class CS_Element
 {
 public:
-	CS_Element(CS_Type type, bool active, uint id, const char* path = nullptr);
+	CS_Element() {}
+	CS_Element(CS_Type type, int n, const char* name, bool active, const char* path = nullptr);
 	virtual ~CS_Element();
 
 
@@ -35,7 +36,7 @@ public:
 private:
 	CS_Type type = CS_NONE;
 	bool active = false;
-	uint id = 0;
+	int n = -1;
 	std::string path;
 
 };
@@ -43,7 +44,7 @@ private:
 class CS_Step
 {
 public:
-	CS_Step(uint start, uint id, CS_Action action, CS_Element* element);
+	CS_Step(uint start, uint n, CS_Action action, CS_Element* element);
 	virtual ~CS_Step();
 
 	bool PerformAction(float dt);
@@ -57,7 +58,7 @@ public:
 	bool isActive() const;
 
 private:
-	uint id = 0;
+	uint n = 0;						//Number to manage an order
 	uint start = 0;					//Time to start the step
 	CS_Action action = ACT_NONE;	//Action to perform
 	CS_Element*	element = nullptr;	//Element to apply the action

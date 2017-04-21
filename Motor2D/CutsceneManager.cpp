@@ -44,7 +44,7 @@ bool j1CutSceneManager::Start()
 		//Load XML
 		cutscene_node = LoadXML(cutscene_file, file._Ptr->_Myval);
 
-		//Create temp Cutscene 
+		//Create temp pointers 
 		Cutscene* temp_cutscene = new Cutscene();
 
 		temp_cutscene->id = cutscene_node.attribute("id").as_uint(0);			//Sets its identifier.
@@ -55,52 +55,46 @@ bool j1CutSceneManager::Start()
 		//Add all Elements involved in its list
 		elements_node = cutscene_node.child("elements");
 
-		//Load Maps 
-		for (temp = elements_node.child("MAP").child("map"); temp != NULL; temp = temp.next_sibling("map"))
-		{
-			//temp_cutscene->LoadMap(temp);
-		}
-
 		//Load NPCs
 		for (temp = elements_node.child("NPCs").child("npc"); temp != NULL; temp = temp.next_sibling("npc"))
 		{
-			//temp_cutscene->LoadNPC(temp);
+			temp_cutscene->LoadNPC(temp);
 		}
 
 		//Load DynObjects
 		for (temp = elements_node.child("DYNOBJECTS").child("dynobject"); temp != NULL; temp = temp.next_sibling("dynobject"))
 		{
-			//temp_cutscene->LoadDynObject(temp);
+			temp_cutscene->LoadDynObject(temp);
 		}
 
 		//Load Items
 		for (temp = elements_node.child("ITEMS").child("item"); temp != NULL; temp = temp.next_sibling("item"))
 		{
-			//temp_cutscene->LoadItem(temp);
+			temp_cutscene->LoadItem(temp);
 		}
 
 		//Load Items
 		for (temp = elements_node.child("IMAGES").child("image"); temp != NULL; temp = temp.next_sibling("image"))
 		{
-			//temp_cutscene->LoadImg(temp);
+			temp_cutscene->LoadImg(temp);
 		}
 
 		//Load Items
 		for (temp = elements_node.child("TEXTS").child("text"); temp != NULL; temp = temp.next_sibling("text"))
 		{
-			//temp_cutscene->LoadText(temp);
+			temp_cutscene->LoadText(temp);
 		}
 
 		//Load Music
 		for (temp = elements_node.child("MUSIC").child("music"); temp != NULL; temp = temp.next_sibling("music"))
 		{
-			//temp_cutscene->LoadMusic(temp);
+			temp_cutscene->LoadMusic(temp);
 		}
 
 		//Load Fx
 		for (temp = elements_node.child("FX").child("fx"); temp != NULL; temp = temp.next_sibling("fx"))
 		{
-			//temp_cutscene->LoadFx(temp);
+			temp_cutscene->LoadFx(temp);
 		}
 
 		//Add the Cutscene in the list -------------------------
@@ -250,43 +244,80 @@ bool Cutscene::Update(float dt)
 	return ret;
 }
 
-bool Cutscene::LoadNPC(pugi::xml_node &)
+bool Cutscene::LoadNPC(pugi::xml_node& node)
 {
+	bool ret = false;
+	if (node != NULL)
+	{
+		this->elements.push_back(new CS_Element(CS_NPC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		ret = true;
+	}
+	return ret;
+}
+
+bool Cutscene::LoadDynObject(pugi::xml_node& node)
+{
+	bool ret = false;
+	if (node != NULL)
+	{
+		elements.push_back(new CS_Element(CS_DYNOBJECT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		ret = true;
+	}
 	return false;
 }
 
-bool Cutscene::LoadMap(pugi::xml_node &)
+bool Cutscene::LoadItem(pugi::xml_node& node)
 {
+	bool ret = false;
+	if (node != NULL)
+	{
+		elements.push_back(new CS_Element(CS_ITEM, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		ret = true;
+	}
 	return false;
 }
 
-bool Cutscene::LoadDynObject(pugi::xml_node &)
+bool Cutscene::LoadImg(pugi::xml_node& node)
 {
+	bool ret = false;
+	if (node != NULL)
+	{
+		elements.push_back(new CS_Element(CS_IMAGE, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		ret = true;
+	}
 	return false;
 }
 
-bool Cutscene::LoadItem(pugi::xml_node &)
+bool Cutscene::LoadText(pugi::xml_node& node)
 {
+	bool ret = false;
+	if (node != NULL)
+	{
+		elements.push_back(new CS_Element(CS_TEXT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		ret = true;
+	}
 	return false;
 }
 
-bool Cutscene::LoadImg(pugi::xml_node &)
+bool Cutscene::LoadMusic(pugi::xml_node& node)
 {
+	bool ret = false;
+	if (node != NULL)
+	{
+		elements.push_back(new CS_Element(CS_MUSIC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		ret = true;
+	}
 	return false;
 }
 
-bool Cutscene::LoadText(pugi::xml_node &)
+bool Cutscene::LoadFx(pugi::xml_node& node)
 {
-	return false;
-}
-
-bool Cutscene::LoadMusic(pugi::xml_node &)
-{
-	return false;
-}
-
-bool Cutscene::LoadFx(pugi::xml_node &)
-{
+	bool ret = false;
+	if (node != NULL)
+	{
+		elements.push_back(new CS_Element(CS_FX, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		ret = true;
+	}
 	return false;
 }
 
@@ -294,8 +325,12 @@ bool Cutscene::LoadFx(pugi::xml_node &)
 
 
 //CS ELEMENTS ------------------------------
-CS_Element::CS_Element(CS_Type type, bool active, uint id, const char* path):type(type),active(active),id(id),path(path)
+CS_Element::CS_Element(CS_Type type, int n, const char* name, bool active, const char* path):type(type), n(n), active(active),name(name)
 {
+	if (path != nullptr)
+	{
+		this->path = path;
+	}
 }
 
 CS_Element::~CS_Element()
@@ -304,7 +339,7 @@ CS_Element::~CS_Element()
 
 
 //CS STEPS ----------------------------------
-CS_Step::CS_Step(uint start, uint id, CS_Action action, CS_Element* cs_element):start(start), id(id), action(action)
+CS_Step::CS_Step(uint start, uint n, CS_Action action, CS_Element* cs_element):start(start), n(n), action(action)
 {
 	element = cs_element;
 }
@@ -328,12 +363,12 @@ bool CS_Step::PerformAction(float dt)
 		action_name = "move";
 		break;
 	default:
-		action_name = "NONE";
+		action_name = "none";
 		break;
 
 	}
 
-	LOG("Step '%i' started at '%.3f' performing '%s' on '%s'", id, start, action);
+	LOG("Step '%i' started at '%.3f' performing '%s' on '%s'", n, start, action_name.c_str(), element->name.c_str());
 	return true;
 }
 
