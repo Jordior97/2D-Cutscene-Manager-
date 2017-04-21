@@ -83,6 +83,36 @@ We load the cutscenes when the game starts by reading from XML files that store 
 
 When an event TRIGGERS a cutscene, we iterate the *cutscenes* list to find the correct cutscene and start it.
 
+### CUTSCENE ANATOMY
+```cpp
+class Cutscene
+{
+	//LOAD ELEMENTS FUNCTIONS ---------
+	bool LoadElement(pugi::xml_node&);
+	// ---------------------------------
+
+	//STEPS FUNCTIONS -----------------------------------
+	bool LoadStep(pugi::xml_node&, Cutscene* cutscene);
+	void StepDone();
+	//----------------------------------------------------
+
+	uint id = 0;  //ID to locate when triggered
+	j1Timer	timer;  //To control reproducing time of the cutscene
+	std::list<CS_Element*> elements; //Elements controlled by the cutscene
+	std::list<CS_Step*> steps; //Steps to follow in order when reproduced
+};
+```
+
+**ELEMENTS:** game objects that will be controlled by the cutscene during its reproduction.
+
+In my case, they can be:
+ - IMAGES
+ - TEXTS
+ - MUSICS
+ - SOUND FX
+ - NPCs
+
+
 
 
 
