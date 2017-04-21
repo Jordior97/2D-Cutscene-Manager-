@@ -52,9 +52,11 @@ bool j1CutSceneManager::Start()
 		temp_cutscene->name = cutscene_node.attribute("name").as_string("");	//Sets its name.
 		temp_cutscene->time = cutscene_node.attribute("time").as_uint(0);		//Sets its max time.
 
-
 		//LOAD ELEMENTS INVOLVED IN THE CUTSCENE --------------------------------------------------------------
 		elements_node = cutscene_node.child("elements");
+
+		//Load Map
+		temp_cutscene->SetMap(elements_node);
 
 		//Load NPCs
 		for (temp = elements_node.child("NPCs").child("npc"); temp != NULL; temp = temp.next_sibling("npc"))
@@ -256,7 +258,7 @@ bool Cutscene::Update(float dt)
 		//Update the state to perform its action
 		if (step->isActive() == true)
 		{
-			step->PerformAction(dt);
+			step->DoAction(dt);
 		}
 
 		temp++;
@@ -278,7 +280,7 @@ bool Cutscene::LoadNPC(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		this->elements.push_back(new CS_Element(CS_NPC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		this->elements.push_back(new CS_Element(CS_NPC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
 		ret = true;
 	}
 	return ret;
@@ -289,7 +291,7 @@ bool Cutscene::LoadDynObject(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_DYNOBJECT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		elements.push_back(new CS_Element(CS_DYNOBJECT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
 		ret = true;
 	}
 	return false;
@@ -300,7 +302,7 @@ bool Cutscene::LoadItem(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_ITEM, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		elements.push_back(new CS_Element(CS_ITEM, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
 		ret = true;
 	}
 	return false;
@@ -311,7 +313,9 @@ bool Cutscene::LoadImg(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_IMAGE, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		iPoint pos(node.attribute("x").as_int(0), node.attribute("y").as_int(0));
+		SDL_Rect rect = { node.attribute("tex_x").as_int(0), node.attribute("tex_y").as_int(0), node.attribute("tex_w").as_int(0), node.attribute("tex_h").as_int(0) };
+		elements.push_back(new CS_Image(CS_IMAGE, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), node.attribute("file").as_string(""), rect, pos));
 		ret = true;
 	}
 	return false;
@@ -322,7 +326,7 @@ bool Cutscene::LoadText(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_TEXT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		elements.push_back(new CS_Element(CS_TEXT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
 		ret = true;
 	}
 	return false;
@@ -333,7 +337,7 @@ bool Cutscene::LoadMusic(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_MUSIC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		elements.push_back(new CS_Element(CS_MUSIC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
 		ret = true;
 	}
 	return false;
@@ -344,7 +348,7 @@ bool Cutscene::LoadFx(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_FX, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false)));
+		elements.push_back(new CS_Element(CS_FX, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
 		ret = true;
 	}
 	return false;
@@ -365,6 +369,13 @@ bool Cutscene::LoadStep(pugi::xml_node& node, Cutscene* cutscene) //Pass the cut
 		ret = true;
 	}
 	return ret;
+}
+
+bool Cutscene::SetMap(pugi::xml_node& node)
+{
+	map_id = node.child("MAP").attribute("id").as_int(-1);
+	//tmx = node.attribute("file").as_string("");
+	return false;
 }
 
 //--------------------------------------
@@ -393,7 +404,7 @@ CS_Step::~CS_Step()
 {
 }
 
-bool CS_Step::PerformAction(float dt)
+bool CS_Step::DoAction(float dt)
 {
 	if (cutscene->timer.ReadSec() <= start + duration) // TODO MED -> every action will trigger the finished step when completed
 	{
@@ -481,3 +492,13 @@ bool CS_Step::isFinished() const
 {
 	return finished;
 }
+
+// CS IMAGE -----------------
+CS_Image::CS_Image(CS_Type type, int n, const char* name, bool active, const char* path, SDL_Rect rect, iPoint pos):
+	CS_Element(type, n, name, active, path),rect(rect),pos(pos){}
+
+CS_Image::~CS_Image()
+{
+}
+
+//-----------------------------

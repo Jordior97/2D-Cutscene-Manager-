@@ -7,39 +7,39 @@
 #include <string>
 
 enum CS_Type { CS_IMAGE, CS_TEXT, CS_NPC, CS_DYNOBJECT, CS_ITEM, CS_MUSIC, CS_FX, CS_NONE };
-enum CS_Action { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_NONE };
+enum CS_Action { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_PLAY, ACT_NONE };
 
 class j1Timer;
 class Cutscene;
-
-
-class CS_Image
-{
-public:
-	CS_Image();
-	~CS_Image();
-
-private:
-	SDL_Texture* tex = nullptr;
-	SDL_Rect rect = { 0, 0, 0, 0 };
-};
-
 
 class CS_Element
 {
 public:
 	CS_Element() {}
-	CS_Element(CS_Type type, int n, const char* name, bool active, const char* path = nullptr);
+	CS_Element(CS_Type type, int n, const char* name, bool active, const char* path);
 	virtual ~CS_Element();
 
-
 	std::string name;
+
 private:
 	CS_Type type = CS_NONE;
 	bool active = false;
 	int n = -1;
 	std::string path;
+};
 
+class CS_Image : public CS_Element
+{
+public:
+	CS_Image(CS_Type type, int n, const char* name, bool active, const char* path, SDL_Rect rect, iPoint pos);
+	~CS_Image();
+
+
+
+private:
+	SDL_Texture* tex = nullptr;
+	SDL_Rect rect = { 0, 0, 0, 0 };
+	iPoint pos = { 0, 0 };
 };
 
 class CS_Step
@@ -48,7 +48,7 @@ public:
 	CS_Step(int n, int start, int duration, Cutscene* cutscene);
 	virtual ~CS_Step();
 
-	bool PerformAction(float dt);
+	bool DoAction(float dt);
 
 	//STEP FUNCTIONS -----
 	void StartStep();
@@ -97,7 +97,7 @@ public:
 	//--------------
 
 	//MAP -------------
-	//bool SetMap(uint id);
+	bool SetMap(pugi::xml_node&);
 	//---------------------
 
 	//UTILITY FUNCTIONS ------
@@ -110,11 +110,11 @@ public:
 	uint time = 0;							//Max time of the cutscene
 	uint id = 0;							//ID to locate when triggered
 	j1Timer	timer;							//To control reproducing time of the cutscene
+	int map_id = -1;						//Id to know wich map charge
 
 private:
 	std::list<CS_Element*> elements;		//Elements controlled by the cutscene
 	std::list<CS_Step*> steps;				//Steps to follow in order when reproduced
-	uint map_id = 0;;						//Id to know wich map charge
 	bool finished = false;					//To know if Cutscene has finished
 };
 

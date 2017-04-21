@@ -37,6 +37,7 @@
 
   <cutscenemanager>
     <!--id= 0--> <file file="cutscenes/HelloWorld.xml"/>
+    <!--id= 1--> <file file="cutscenes/IntroCutscene.xml"/>
   </cutscenemanager>
   
 	<window>
