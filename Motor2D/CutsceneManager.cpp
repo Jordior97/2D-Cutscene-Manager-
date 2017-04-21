@@ -247,8 +247,8 @@ bool Cutscene::Update(float dt)
 	{
 		CS_Step* step = *temp;
 
-		//Init the step
-		if (timer.ReadSec() >= step->GetStartTime())
+		//Init the step (only 1 time
+		if (timer.ReadSec() >= step->GetStartTime() && step->isActive() == false && step->isFinished() == false)
 		{
 			step->StartStep();
 		}
@@ -268,7 +268,7 @@ bool Cutscene::Update(float dt)
 	}
 
 	float sec = timer.ReadSec();
-	LOG("Reproducing %s cutscene, %.4fs", name.c_str(), sec);
+	//LOG("Reproducing %s cutscene, %.4fs", name.c_str(), sec);
 
 	return ret;
 }
@@ -356,7 +356,7 @@ bool Cutscene::LoadStep(pugi::xml_node& node, Cutscene* cutscene) //Pass the cut
 	bool ret = false;
 	if (node != NULL && cutscene != nullptr)
 	{
-		CS_Step* temp_step = new CS_Step(node.attribute("n").as_int(-1), node.attribute("start").as_int(-1), cutscene);
+		CS_Step* temp_step = new CS_Step(node.attribute("n").as_int(-1), node.attribute("start").as_int(-1), node.attribute("duration").as_int(-1), cutscene);
 
 		temp_step->SetAction(node);
 		temp_step->SetElement(node);
@@ -385,7 +385,7 @@ CS_Element::~CS_Element()
 
 
 //CS STEPS ----------------------------------
-CS_Step::CS_Step(int n, int start, Cutscene* cutscene):n(n), start(start), cutscene(cutscene)
+CS_Step::CS_Step(int n, int start, int duration, Cutscene* cutscene):n(n), start(start), duration(duration), cutscene(cutscene)
 {
 }
 
@@ -395,24 +395,32 @@ CS_Step::~CS_Step()
 
 bool CS_Step::PerformAction(float dt)
 {
-	std::string action_name;
-	switch (action)
+	if (cutscene->timer.ReadSec() <= start + duration) // TODO MED -> every action will trigger the finished step when completed
 	{
-	case ACT_DISABLE:
-		action_name = "disable";
-		break;
-	case ACT_ENABLE:
-		action_name = "enable";
-		break;
-	case ACT_MOVE:
-		action_name = "move";
-		break;
-	default:
-		action_name = "none";
-		break;
+		std::string action_name;
+		switch (action)
+		{
+		case ACT_DISABLE:
+			action_name = "disable";
+			break;
+		case ACT_ENABLE:
+			action_name = "enable";
+			break;
+		case ACT_MOVE:
+			action_name = "move";
+			break;
+		default:
+			action_name = "none";
+			break;
+		}
+
+		LOG("Step '%i' performing '%s' on '%s'", n, action_name.c_str(), element->name.c_str());
 	}
 
-	LOG("Step '%i' started at '%.3f' performing '%s' on '%s'", n, start, action_name.c_str(), element->name.c_str());
+	else
+	{
+		FinishStep();
+	}
 	return true;
 }
 
@@ -424,11 +432,14 @@ uint CS_Step::GetStartTime() const
 void CS_Step::StartStep()
 {
 	active = true;
+	LOG("Step %i started at %.3fs", n, cutscene->timer.ReadSec());
 }
 
 void CS_Step::FinishStep()
 {
 	active = false;
+	finished = true;
+	LOG("Step %i finished at %.3fs", n, cutscene->timer.ReadSec());
 }
 
 //Set the action programmed to that step that will execute the linked element
@@ -464,4 +475,9 @@ void CS_Step::SetElement(pugi::xml_node& node)
 bool CS_Step::isActive() const
 {
 	return active;
+}
+
+bool CS_Step::isFinished() const
+{
+	return finished;
 }

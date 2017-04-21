@@ -45,7 +45,7 @@ private:
 class CS_Step
 {
 public:
-	CS_Step(int n, int start, Cutscene* cutscene);
+	CS_Step(int n, int start, int duration, Cutscene* cutscene);
 	virtual ~CS_Step();
 
 	bool PerformAction(float dt);
@@ -59,15 +59,18 @@ public:
 	//UTILITY FUNCTIONS ------------
 	uint GetStartTime() const;
 	bool isActive() const;
+	bool isFinished() const;
 
 
 private:
 	Cutscene* cutscene = nullptr;	//Pointer to the cutscene that it is integrated
 	int n = -1;						//Number to manage an order
 	int start = -1;					//Time to start the step
+	int duration = -1;				//Duration of the step TODO MED -> delete this
 	CS_Action action = ACT_NONE;	//Action to perform
 	CS_Element*	element = nullptr;	//Element to apply the action
-	bool active = false;
+	bool active = false;			//If step is reproducing.
+	bool finished = false;
 };
 
 class Cutscene
@@ -106,14 +109,13 @@ public:
 	std::string name;						//Name of the cutscenes
 	uint time = 0;							//Max time of the cutscene
 	uint id = 0;							//ID to locate when triggered
+	j1Timer	timer;							//To control reproducing time of the cutscene
 
 private:
 	std::list<CS_Element*> elements;		//Elements controlled by the cutscene
-	std::list<CS_Step*> steps;			//Steps to follow in order when reproduced
-	CS_Step* current_step = nullptr;		//Current step that is reproducing in the cutscene
+	std::list<CS_Step*> steps;				//Steps to follow in order when reproduced
 	uint map_id = 0;;						//Id to know wich map charge
 	bool finished = false;					//To know if Cutscene has finished
-	j1Timer	timer;							//To control reproducing time of the cutscene
 };
 
 
