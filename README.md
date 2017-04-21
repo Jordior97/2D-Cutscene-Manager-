@@ -59,3 +59,33 @@ This mechanic is commonly called *quick time events*.
 ![](http://static1.gamespot.com/uploads/original/1457/14573540/2834776-0956136431-But%2Bh.gif)
 
 
+## HOW MY CUTSCENE MANAGER WORKS
+
+This project has been built in C++ language using Visual Studio. It's divided into different MODULES: each one works in a specific area (audio, textures, file system...). So, the Cutscene Manager is developed as one of them (works on the specific area of Cutscenes).
+This manager works with Real Time Cutscenes, it's implemented using SDL2.0 libraries and read the cutscenes from XML files.
+
+The functionality of the Cutscene Manager is to **TAKE CONTROL OF THE GAME** when an event triggers a specific cutscene (starting the game, when we access into a specific zone, etc.). 
+
+### CUTSCENE MANAGER ANATOMY
+```cpp
+class j1CutSceneManager : public j1Module
+{
+	bool StartCutscene(uint id); 	//Active a cutscene when an event triggers it
+	bool FinishCutscene(); 	//Deactive the active cutscene
+
+	list<Cutscene*> cutscenes;  //container with all cutscenes
+	list<std::string> paths;  //container with names of all paths of the cutscenes
+	Cutscene* active_cutscene = nullptr;  //To know wich cutscene is reproduced at the moment
+};
+```
+The Cutscene Manager works as a container that stores all Cutscenes that will be reproduced at a specific moment of the game.
+We load the cutscenes when the game starts by reading from XML files that store all the information needed.
+
+When an event TRIGGERS a cutscene, we iterate the *cutscenes* list to find the correct cutscene and start it.
+
+
+
+
+
+
+
