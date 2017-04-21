@@ -92,8 +92,9 @@ public:
 	bool LoadFx(pugi::xml_node&);
 	// ------------------------------
 
-	//LOAD STEPS FUNCTIONS ---
+	//STEPS FUNCTIONS ---
 	bool LoadStep(pugi::xml_node&, Cutscene* cutscene);
+	void StepDone();
 	//--------------
 
 	//MAP -------------
@@ -107,7 +108,6 @@ public:
 	//---------------------
 
 	std::string name;						//Name of the cutscenes
-	uint time = 0;							//Max time of the cutscene
 	uint id = 0;							//ID to locate when triggered
 	j1Timer	timer;							//To control reproducing time of the cutscene
 	int map_id = -1;						//Id to know wich map charge
@@ -116,6 +116,10 @@ private:
 	std::list<CS_Element*> elements;		//Elements controlled by the cutscene
 	std::list<CS_Step*> steps;				//Steps to follow in order when reproduced
 	bool finished = false;					//To know if Cutscene has finished
+	
+	//TO CONTROL WHEN THE CUTSCENE IS FINISHED
+	uint num_steps = 0;
+	uint steps_done = 0;
 };
 
 

@@ -222,9 +222,16 @@ bool j1Scene::Update(float dt)
 		}
 	}
 
-	if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
+	if (gamestate == INGAME)
 	{
-		App->cs_manager->StartCutscene(0); 
+		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
+		{
+			App->cs_manager->StartCutscene(0);
+		}
+		if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
+		{
+			App->cs_manager->StartCutscene(1);
+		}
 	}
 
 	return true;

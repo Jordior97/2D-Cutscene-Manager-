@@ -51,7 +51,6 @@ bool j1CutSceneManager::Start()
 
 		temp_cutscene->id = cutscene_node.attribute("id").as_uint(0);			//Sets its identifier.
 		temp_cutscene->name = cutscene_node.attribute("name").as_string("");	//Sets its name.
-		temp_cutscene->time = cutscene_node.attribute("time").as_uint(0);		//Sets its max time.
 
 		//LOAD ELEMENTS INVOLVED IN THE CUTSCENE --------------------------------------------------------------
 		elements_node = cutscene_node.child("elements");
@@ -245,14 +244,14 @@ bool Cutscene::Start()
 bool Cutscene::Update(float dt)
 {
 	bool ret = true;
-
+	bool active = false;
 	//Iterate the steps of the cutscene to update the active ones
 	std::list<CS_Step*>::iterator temp = steps.begin();
 	while (temp != steps.end())
 	{
 		CS_Step* step = *temp;
 
-		//Init the step (only 1 time
+		//Init the step (only once)
 		if (timer.ReadSec() >= step->GetStartTime() && step->isActive() == false && step->isFinished() == false)
 		{
 			step->StartStep();
@@ -267,13 +266,11 @@ bool Cutscene::Update(float dt)
 		temp++;
 	}
 
-	if (timer.ReadSec() >= time)
+	//If all stpes have been reproduced, finish the cutscene
+	if (steps_done >= num_steps)
 	{
 		finished = true;
 	}
-
-	float sec = timer.ReadSec();
-	//LOG("Reproducing %s cutscene, %.4fs", name.c_str(), sec);
 
 	return ret;
 }
@@ -369,9 +366,15 @@ bool Cutscene::LoadStep(pugi::xml_node& node, Cutscene* cutscene) //Pass the cut
 		temp_step->SetElement(node);
 
 		this->steps.push_back(temp_step);
+		num_steps++;
 		ret = true;
 	}
 	return ret;
+}
+
+void Cutscene::StepDone()
+{
+	steps_done++;
 }
 
 bool Cutscene::SetMap(pugi::xml_node& node)
@@ -457,6 +460,7 @@ void CS_Step::FinishStep()
 {
 	active = false;
 	finished = true;
+	cutscene->StepDone(); 
 	LOG("Step %i finished at %.3fs", n, cutscene->timer.ReadSec());
 }
 
@@ -476,6 +480,10 @@ void CS_Step::SetAction(pugi::xml_node& node)
 	else if (action_type == "move")
 	{
 		action = ACT_MOVE;
+	}
+	else if (action_type == "play")
+	{
+		action = ACT_PLAY;
 	}
 	else
 	{
