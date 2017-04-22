@@ -8,6 +8,7 @@
 
 enum CS_Type { CS_IMAGE, CS_TEXT, CS_NPC, CS_DYNOBJECT, CS_ITEM, CS_MUSIC, CS_FX, CS_NONE };
 enum Action_Type { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_PLAY, ACT_NONE };
+enum Dir_Type { CS_UP, CS_DOWN, CS_LEFT, CS_RIGHT, NO_DIR };
 
 class j1Timer;
 class Cutscene;
@@ -53,6 +54,7 @@ class CS_Image : public CS_Element
 public:
 	CS_Image(CS_Type type, int n, const char* name, bool active, const char* path, SDL_Rect rect, iPoint pos);
 	~CS_Image();
+	void Move(float x, float y);
 
 	//UTILITY FUNCTIONS -------------
 	SDL_Texture* GetTexture()const;
@@ -152,8 +154,11 @@ public:
 	void SetAction(pugi::xml_node&);
 
 	//ACTION FUNCTIONS ----------
-	void LoadMovement(iPoint dest);
+	void LoadMovement(iPoint dest, int speed, const std::string& dir);
+	bool DoMovement(float dt);
+	bool CheckMovementCompleted(iPoint curr_pos);
 
+	void Play();
 	//---------------------------
 
 	//UTILITY FUNCTIONS ------------
@@ -177,6 +182,9 @@ private:
 	/*Movement*/
 	iPoint origin = { 0, 0 };
 	iPoint dest = { 0, 0 };
+	int mov_speed = 0;
+	Dir_Type direction = NO_DIR;
+
 
 
 

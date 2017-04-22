@@ -434,6 +434,7 @@ bool CS_Step::DoAction(float dt)
 			break;
 		case ACT_MOVE:
 			action_name = "move";
+			DoMovement(dt);
 			break;
 		case ACT_PLAY:
 			action_name = "play";
@@ -495,7 +496,9 @@ void CS_Step::SetAction(pugi::xml_node& node)
 	{
 		act_type = ACT_MOVE;
 		iPoint destination = { node.child("element").child("movement").attribute("dest_x").as_int(0), node.child("element").child("movement").attribute("dest_y").as_int(0) };
-		LoadMovement(destination);
+		std::string direction_type = node.child("element").child("movement").attribute("direction").as_string("");
+
+		LoadMovement(destination, node.child("element").child("movement").attribute("speed").as_int(1), direction_type);
 	}
 	else if (action_type == "play")
 	{
@@ -507,20 +510,131 @@ void CS_Step::SetAction(pugi::xml_node& node)
 	}
 }
 
-void CS_Step::LoadMovement(iPoint destination)
+void CS_Step::LoadMovement(iPoint destination, int speed, const std::string& dir)
 {
 	switch (element->GetType())
 	{
 	case CS_IMAGE:
 	{
 		CS_Image* img = static_cast<CS_Image*>(element);
+
+		//Set the direction of the movement
+		if (dir == "up")
+		{
+			direction = CS_UP;
+		}
+		else if (dir == "down")
+		{
+			direction = CS_DOWN;
+		}
+		else if (dir == "left")
+		{
+			direction = CS_LEFT;
+		}
+		else if (dir == "right")
+		{
+			direction = CS_RIGHT;
+		}
+		else
+		{
+			direction = NO_DIR;
+		}
+
 		origin = img->GetPos();
 		dest = destination;
-		LOG("Movement Loaded-> oX:%i oY:%i dX:%i dY:%i", origin.x, origin.y, dest.x, dest.y);
+		mov_speed = speed;
+
+		LOG("Movement Loaded-> oX:%i oY:%i dX:%i dY:%i speed:%i dir:%i", origin.x, origin.y, dest.x, dest.y, speed, direction);
+
 		break;
 	}
 	default:
 		break;
+	}
+}
+
+bool CS_Step::DoMovement(float dt)
+{
+	iPoint curr_pos;
+	if (element->GetType() == CS_IMAGE)
+	{
+		CS_Image* image = static_cast<CS_Image*>(element);
+		switch (direction)
+		{
+		case CS_UP:
+			image->Move(0, -ceil(mov_speed*dt));
+			break;
+		case CS_DOWN:
+			image->Move(0, ceil(mov_speed*dt));
+			break;
+		case CS_LEFT:
+			image->Move(-ceil(mov_speed*dt), 0);
+			break;
+		case CS_RIGHT:
+			image->Move(ceil(mov_speed*dt), 0);
+			break;
+		default:
+			break;
+		}	
+		curr_pos = image->GetPos();
+	}
+
+	CheckMovementCompleted(curr_pos);
+
+	return true;
+}
+
+bool CS_Step::CheckMovementCompleted(iPoint curr_pos)
+{
+	bool ret = false;
+	switch (direction)
+	{
+	case CS_UP:
+		if (curr_pos.y <= dest.y)
+		{
+			ret = true;
+			FinishStep();
+		}
+		break;
+	case CS_DOWN:
+		if (curr_pos.y >= dest.y)
+		{
+			ret = true;
+			FinishStep();
+		}
+		break;
+	case CS_LEFT:
+		if (curr_pos.x <= dest.x)
+		{
+			ret = true;
+			FinishStep();
+		}
+		break;
+	case CS_RIGHT:
+		if (curr_pos.x >= dest.x)
+		{
+			ret = true;
+			FinishStep();
+		}
+		break;
+	default:
+		break;
+	}
+	return ret;
+}
+
+
+void CS_Step::Play()
+{
+	if (element->GetType() == CS_MUSIC)
+	{
+		CS_Music* mus= static_cast<CS_Music*>(element);
+		mus->Play();
+	}
+	if (element->GetType() == CS_FX)
+	{
+		CS_SoundFx* fx = static_cast<CS_SoundFx*>(element);
+		fx->Play();
 	}
 }
 
@@ -549,7 +663,7 @@ CS_Image::~CS_Image()
 {
 }
 
-SDL_Texture * CS_Image::GetTexture() const
+SDL_Texture* CS_Image::GetTexture() const
 {
 	return tex;
 }
@@ -562,6 +676,12 @@ SDL_Rect CS_Image::GetRect() const
 iPoint CS_Image::GetPos() const
 {
 	return pos;
+}
+
+void CS_Image::Move(float x, float y)
+{
+	pos.x = x;
+	pos.y = y;
 }
 
 //-----------------------------
@@ -604,6 +724,7 @@ void CS_SoundFx::LoadFx()
 
 void CS_SoundFx::Play()
 {
+	App->audio->PlayFx(fx_id, loops);
 }
 
 uint CS_SoundFx::GetID() const
