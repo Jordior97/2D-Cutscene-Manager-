@@ -47,7 +47,7 @@ public:
 	// delete elements witout player
 	bool DelteElements();
 
-	//Create Functions 
+	//Create Functions
 	Soldier* CreateSoldier(uint id, pugi::xml_node& );
 	Item* CreateItem(uint id, iPoint position);
 	//Hookshot* CreateHookshot();

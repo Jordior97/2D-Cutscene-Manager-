@@ -366,8 +366,8 @@ bool Cutscene::LoadStep(pugi::xml_node& node, Cutscene* cutscene) //Pass the cut
 	{
 		CS_Step* temp_step = new CS_Step(node.attribute("n").as_int(-1), node.attribute("start").as_int(-1), node.attribute("duration").as_int(-1), cutscene);
 
-		temp_step->SetAction(node);
 		temp_step->SetElement(node);
+		temp_step->SetAction(node);
 
 		this->steps.push_back(temp_step);
 		num_steps++;
@@ -404,6 +404,11 @@ CS_Element::~CS_Element()
 {
 }
 
+CS_Type CS_Element::GetType() const
+{
+	return type;
+}
+
 
 //CS STEPS ----------------------------------
 CS_Step::CS_Step(int n, int start, int duration, Cutscene* cutscene):n(n), start(start), duration(duration), cutscene(cutscene)
@@ -419,7 +424,7 @@ bool CS_Step::DoAction(float dt)
 	if (cutscene->timer.ReadSec() <= start + duration) // TODO MED -> every action will trigger the finished step when completed
 	{
 		std::string action_name;
-		switch (action)
+		switch (act_type)
 		{
 		case ACT_DISABLE:
 			action_name = "disable";
@@ -449,6 +454,11 @@ bool CS_Step::DoAction(float dt)
 	return true;
 }
 
+CS_Type CS_Step::GetElementType() const
+{
+	return element->GetType();
+}
+
 uint CS_Step::GetStartTime() const
 {
 	return start;
@@ -475,23 +485,42 @@ void CS_Step::SetAction(pugi::xml_node& node)
 
 	if (action_type == "enable")
 	{
-		action = ACT_ENABLE;
+		act_type = ACT_ENABLE;
 	}
 	else if (action_type == "disable")
 	{
-		action = ACT_DISABLE;
+		act_type = ACT_DISABLE;
 	}
 	else if (action_type == "move")
 	{
-		action = ACT_MOVE;
+		act_type = ACT_MOVE;
+		iPoint destination = { node.child("element").child("movement").attribute("dest_x").as_int(0), node.child("element").child("movement").attribute("dest_y").as_int(0) };
+		LoadMovement(destination);
 	}
 	else if (action_type == "play")
 	{
-		action = ACT_PLAY;
+		act_type = ACT_PLAY;
 	}
 	else
 	{
-		action = ACT_NONE;
+		act_type = ACT_NONE;
+	}
+}
+
+void CS_Step::LoadMovement(iPoint destination)
+{
+	switch (element->GetType())
+	{
+	case CS_IMAGE:
+	{
+		CS_Image* img = static_cast<CS_Image*>(element);
+		origin = img->GetPos();
+		dest = destination;
+		LOG("Movement Loaded-> oX:%i oY:%i dX:%i dY:%i", origin.x, origin.y, dest.x, dest.y);
+		break;
+	}
+	default:
+		break;
 	}
 }
 
@@ -589,6 +618,7 @@ uint CS_SoundFx::GetLoops() const
 
 // ---------------------------------------
 
+// CS TECT --------------------------------------
 CS_Text::CS_Text(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos, const char* txt):
 	CS_Element(type, n, name, active, path)
 {
@@ -610,3 +640,39 @@ Text* CS_Text::GetText() const
 {
 	return text;
 }
+// -----------------------------------------------
+
+/*CS_NPC::CS_NPC(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos):
+	CS_Element(type,n,name,active,path)
+{
+	App->entity_elements->C
+}
+
+CS_NPC::~CS_NPC()
+{
+}*/
+
+
+//CS ACTIONS ----------------------------------
+/*CS_Action::CS_Action(Action_Type type):type(type)
+{
+}
+
+CS_Action::~CS_Action()
+{
+}
+
+bool CS_Action::PerformAction(CS_Element* element)
+{
+	return true;
+}
+
+// ------------------------------------------------
+
+CS_Movement::CS_Movement(Action_Type type, iPoint dest) :CS_Action(type), dest(dest)
+{
+}
+
+CS_Movement::~CS_Movement()
+{
+}*/

@@ -7,11 +7,12 @@
 #include <string>
 
 enum CS_Type { CS_IMAGE, CS_TEXT, CS_NPC, CS_DYNOBJECT, CS_ITEM, CS_MUSIC, CS_FX, CS_NONE };
-enum CS_Action { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_PLAY, ACT_NONE };
+enum Action_Type { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_PLAY, ACT_NONE };
 
 class j1Timer;
 class Cutscene;
 class Text;
+
 
 class CS_Element
 {
@@ -19,6 +20,11 @@ public:
 	CS_Element() {}
 	CS_Element(CS_Type type, int n, const char* name, bool active, const char* path);
 	virtual ~CS_Element();
+
+	//UTILITY FUNCTIONS ---------
+	CS_Type GetType() const;
+
+	// ------------------------
 
 	std::string name;
 
@@ -28,6 +34,19 @@ protected:
 	int n = -1;
 	std::string path;
 };
+
+/*class CS_NPC: public CS_Element
+{
+	CS_NPC(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos);
+	~CS_NPC();
+
+	SceneElement* GetEntity() const;
+	void SetNull();
+	void SetEntity(SceneElement* e);
+
+private:
+	SceneElement*	entity;
+};*/
 
 class CS_Image : public CS_Element
 {
@@ -89,6 +108,35 @@ private:
 	uint loops = 0;
 };
 
+/*class CS_Action
+{
+public:
+	CS_Action(Action_Type type);
+	virtual ~CS_Action();
+
+	virtual bool PerformAction(CS_Element* element);
+
+	std::string name;
+
+protected:
+	Action_Type type;
+
+};
+
+class CS_Movement: public CS_Action 
+{
+public:
+	CS_Movement(Action_Type type, iPoint dest);
+	~CS_Movement();
+
+	bool PerformAction(CS_Element* element);
+
+public:
+	iPoint origin = { 0, 0 };
+	iPoint dest = { 0, 0 };
+
+};*/
+
 class CS_Step
 {
 public:
@@ -103,7 +151,13 @@ public:
 	void SetElement(pugi::xml_node&);
 	void SetAction(pugi::xml_node&);
 
+	//ACTION FUNCTIONS ----------
+	void LoadMovement(iPoint dest);
+
+	//---------------------------
+
 	//UTILITY FUNCTIONS ------------
+	CS_Type GetElementType() const;
 	uint GetStartTime() const;
 	bool isActive() const;
 	bool isFinished() const;
@@ -114,10 +168,18 @@ private:
 	int n = -1;						//Number to manage an order
 	int start = -1;					//Time to start the step
 	int duration = -1;				//Duration of the step TODO MED -> delete this
-	CS_Action action = ACT_NONE;	//Action to perform
+	Action_Type act_type= ACT_NONE;	
 	CS_Element*	element = nullptr;	//Element to apply the action
 	bool active = false;			//If step is reproducing.
 	bool finished = false;
+
+	//ACTIONS VARIABLES
+	/*Movement*/
+	iPoint origin = { 0, 0 };
+	iPoint dest = { 0, 0 };
+
+
+
 };
 
 class Cutscene
