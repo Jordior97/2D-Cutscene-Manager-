@@ -2,6 +2,9 @@
 #include "j1FileSystem.h"
 #include "SceneElements.h"
 #include "j1Scene.h"
+#include "j1Audio.h"
+#include "j1Gui.h"
+#include "j1GuiElements.h"
 #include "p2Log.h"
 
 
@@ -516,4 +519,93 @@ CS_Image::~CS_Image()
 {
 }
 
+SDL_Texture * CS_Image::GetTexture() const
+{
+	return tex;
+}
+
+SDL_Rect CS_Image::GetRect() const
+{
+	return rect;
+}
+
+iPoint CS_Image::GetPos() const
+{
+	return pos;
+}
+
 //-----------------------------
+
+//CS MUSIC --------------------
+CS_Music::CS_Music(CS_Type type, int n, const char* name, bool active, const char * path):
+	CS_Element(type, n, name, active, path)
+{
+}
+
+CS_Music::~CS_Music()
+{
+}
+
+void CS_Music::Play()
+{
+	App->audio->PlayMusic(path.c_str());
+}
+//----------------------------------------
+
+
+//CS FX ----------------------------------------
+CS_SoundFx::CS_SoundFx(CS_Type type, int n, const char* name, bool active, const char* path, uint loops):
+	CS_Element(type, n, name, active, path),loops(loops)
+{
+	if (path != nullptr)
+	{
+		LoadFx(); //Load the sound effect into the Audio Module
+	}
+}
+
+CS_SoundFx::~CS_SoundFx()
+{
+}
+
+void CS_SoundFx::LoadFx()
+{
+	fx_id = App->audio->LoadFx(path.c_str());
+}
+
+void CS_SoundFx::Play()
+{
+}
+
+uint CS_SoundFx::GetID() const
+{
+	return fx_id;
+}
+
+uint CS_SoundFx::GetLoops() const
+{
+	return loops;
+}
+
+// ---------------------------------------
+
+CS_Text::CS_Text(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos, const char* txt):
+	CS_Element(type, n, name, active, path)
+{
+	//App->gui->CreateText(GANONF, string, 29, { position.x + 10, 0 }, 30, { 255,255,255,255 }, false);
+	text = App->gui->CreateText(GANONF, txt, 29, pos, 30, { 255,255,255,255 }, false);
+	text->Visible(active);
+}
+
+CS_Text::~CS_Text()
+{
+}
+
+void CS_Text::SetText(const char* txt)
+{
+	text->Write(txt);
+}
+
+Text* CS_Text::GetText() const
+{
+	return text;
+}

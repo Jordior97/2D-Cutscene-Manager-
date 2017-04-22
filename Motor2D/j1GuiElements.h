@@ -3,14 +3,16 @@
 
 #include "j1Module.h"
 #include "j1InputManager.h"
+#include "j1GuiEntity.h"
 
 enum ButtonState{normal, over, clicked};
 enum FontName{GANONF,PIXEL,PIXELMORE,POKE1};
 
-
 struct 	_TTF_Font;
 class Animation;
 class InputManager;
+class j1GuiEntity;
+
 // ---------------------------------------------------
 
 class Image : public j1GuiEntity

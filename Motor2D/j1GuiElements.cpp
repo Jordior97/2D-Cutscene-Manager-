@@ -140,7 +140,7 @@ Text::Text(FontName search, const char* write, SDL_Color color, uint length, iPo
 
 	CheckString(std::string(write));
 	text_texture = App->font->Print(text.c_str(), color, font);
-	Hitbox.w /= 2; //TODO MID Adapt functions to resolution scale
+	Hitbox.w /= 2;
 	Hitbox.h /= 2;
 }
 
@@ -197,7 +197,6 @@ void Text::Update()
 
 void Text::Write(const char* string)
 {
-
 	text = string;
 	//font = App->font->Load("fonts/zelda_fonts/ReturnofGanon.ttf", 23);
 	text_texture = App->font->Print(text.c_str(), color, font);

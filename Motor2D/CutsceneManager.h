@@ -11,6 +11,7 @@ enum CS_Action { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_PLAY, ACT_NONE };
 
 class j1Timer;
 class Cutscene;
+class Text;
 
 class CS_Element
 {
@@ -21,7 +22,7 @@ public:
 
 	std::string name;
 
-private:
+protected:
 	CS_Type type = CS_NONE;
 	bool active = false;
 	int n = -1;
@@ -34,12 +35,58 @@ public:
 	CS_Image(CS_Type type, int n, const char* name, bool active, const char* path, SDL_Rect rect, iPoint pos);
 	~CS_Image();
 
-
+	//UTILITY FUNCTIONS -------------
+	SDL_Texture* GetTexture()const;
+	SDL_Rect GetRect()const;
+	iPoint GetPos()const;
 
 private:
 	SDL_Texture* tex = nullptr;
 	SDL_Rect rect = { 0, 0, 0, 0 };
 	iPoint pos = { 0, 0 };
+};
+
+class CS_Text : public CS_Element
+{
+public:
+	CS_Text(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos, const char* text);
+	~CS_Text();
+
+	//UTILITY FUNCTIONS ---------------
+	void SetText(const char* txt);
+	Text* GetText()const;
+	//void Move(float x, float y);
+	//---------------------------------
+
+private:
+	Text* text = nullptr;
+};
+
+class CS_Music : public CS_Element
+{
+public:
+	CS_Music(CS_Type type, int n, const char* name, bool active, const char* path);
+	~CS_Music();
+
+	//UTILITY FUNCTIONS ------------
+	void Play();
+};
+
+class CS_SoundFx : public CS_Element
+{
+public:
+	CS_SoundFx(CS_Type type, int n, const char* name, bool active, const char* path, uint loops);
+	~CS_SoundFx();
+	
+	//UTILITY FUNCTIONS ------------
+	void LoadFx();
+	void Play();
+	uint GetID() const;
+	uint GetLoops() const;
+
+private:
+	uint fx_id = 0;
+	uint loops = 0;
 };
 
 class CS_Step
