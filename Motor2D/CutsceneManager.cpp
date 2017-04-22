@@ -421,37 +421,34 @@ CS_Step::~CS_Step()
 
 bool CS_Step::DoAction(float dt)
 {
-	if (cutscene->timer.ReadSec() <= start + duration) // TODO MED -> every action will trigger the finished step when completed
+	std::string action_name;
+	switch (act_type)
 	{
-		std::string action_name;
-		switch (act_type)
-		{
-		case ACT_DISABLE:
-			action_name = "disable";
-			break;
-		case ACT_ENABLE:
-			action_name = "enable";
-			break;
-		case ACT_MOVE:
-			action_name = "move";
-			DoMovement(dt);
-			break;
-		case ACT_PLAY:
-			action_name = "play";
-			break;
-		default:
-			action_name = "none";
-			break;
-		}
-
-		LOG("Step '%i' performing '%s' on '%s'", n, action_name.c_str(), element->name.c_str());
+	case ACT_DISABLE:
+		action_name = "disable";
+		break;
+	case ACT_ENABLE:
+		action_name = "enable";
+		break;
+	case ACT_MOVE:
+		action_name = "move";
+		DoMovement(dt);
+		break;
+	case ACT_PLAY:
+		action_name = "play";
+		break;
+	default:
+		action_name = "none";
+		break;
 	}
 
-	else
+	//Finish the current step if its duration has reach the limit (if the step works with TIME, without taking care of the position)
+	if (duration > -1 && cutscene->timer.ReadSec() >= start + duration)
 	{
 		FinishStep();
 	}
 
+	//LOG("Step '%i' performing '%s' on '%s'", n, action_name.c_str(), element->name.c_str());
 	return true;
 }
 
@@ -496,7 +493,7 @@ void CS_Step::SetAction(pugi::xml_node& node)
 	{
 		act_type = ACT_MOVE;
 		iPoint destination = { node.child("element").child("movement").attribute("dest_x").as_int(0), node.child("element").child("movement").attribute("dest_y").as_int(0) };
-		std::string direction_type = node.child("element").child("movement").attribute("direction").as_string("");
+		std::string direction_type = node.child("element").attribute("dir").as_string("");
 
 		LoadMovement(destination, node.child("element").child("movement").attribute("speed").as_int(1), direction_type);
 	}
@@ -578,9 +575,10 @@ bool CS_Step::DoMovement(float dt)
 		}	
 		curr_pos = image->GetPos();
 	}
-
 	CheckMovementCompleted(curr_pos);
 
+	LOG("Moving %s X:%i Y:%i", element->name.c_str(), curr_pos.x, curr_pos.y);
+	
 	return true;
 }
 
@@ -680,8 +678,8 @@ iPoint CS_Image::GetPos() const
 
 void CS_Image::Move(float x, float y)
 {
-	pos.x = x;
-	pos.y = y;
+	pos.x += x;
+	pos.y += y;
 }
 
 //-----------------------------
