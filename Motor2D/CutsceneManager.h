@@ -240,7 +240,7 @@ public:
 	// Called before quitting
 	bool CleanUp();
 	
-
+	bool CutsceneReproducing() const;
 	//void Clear();
 
 private:

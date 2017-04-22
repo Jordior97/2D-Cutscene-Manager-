@@ -57,11 +57,14 @@ bool j1Gui::PreUpdate()
 // Called after all Updates
 bool j1Gui::PostUpdate()
 {
-	for (uint i = 0; i < entities.size(); i++) 
+	if (App->scene->ingame == false)
 	{
-		if (entities[i]->visible == true) 
+		for (uint i = 0; i < entities.size(); i++)
 		{
-			entities[i]->Draw();
+			if (entities[i]->visible == true)
+			{
+				entities[i]->Draw();
+			}
 		}
 	}
 	return true;

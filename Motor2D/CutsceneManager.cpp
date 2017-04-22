@@ -196,6 +196,18 @@ bool j1CutSceneManager::CleanUp()
 	return false;
 }
 
+bool j1CutSceneManager::CutsceneReproducing() const
+{
+	if (active_cutscene != nullptr)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 
 //Read from .xml cutscene file
 pugi::xml_node j1CutSceneManager::LoadXML(pugi::xml_document & config_file, std::string file) const

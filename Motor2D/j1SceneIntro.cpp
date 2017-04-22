@@ -42,10 +42,6 @@ bool j1SceneIntro::Awake()
 // Called before the first frame
 bool j1SceneIntro::Start()
 {
-	//TitleScreen_letters = App->tex->Load("gui/title_screen/letters.png");
-	//TitleScreen_bg = App->tex->Load("gui/title_screen/bg_anim.png");
-	//Menu_Cursor = App->audio->LoadFx("audio/fx/LTTP_Menu_Cursor.wav");
-	//App->audio->PlayMusic("audio/music/ZELDA/ZeldaScreenSelection.ogg");
 	fade = true;
 	menu = true;
 	bg_anim = 0;
@@ -64,33 +60,6 @@ bool j1SceneIntro::PreUpdate()
 // Called each loop iteration
 bool j1SceneIntro::Update(float dt)
 {
-	if (App->scene->ingame == false)
-	{
-		if (menu == false)
-		{
-			if (bg_anim < -180) {
-				right = true;
-			}
-			if (bg_anim > 0) {
-				right = false;
-			}
-			if (right)
-			{
-				bg_anim += 0.3;
-			}
-			else
-			{
-				bg_anim -= 0.3;
-			}
-			App->render->Blit(TitleScreen_bg, 0, 0, NULL, NULL, false, NULL, NULL, NULL, { bg_anim,0 });
-			App->render->Blit(TitleScreen_letters, 50, 10, NULL, NULL, false);
-		}
-		else
-		{
-			App->render->Blit(Menu_bg, 0, 0, NULL, NULL, false, NULL, NULL, NULL, { -70,0 });
-			App->render->Blit(TitleScreen_letters, -10, 0, NULL, NULL, false);
-		}
-	}
 	if (goHouse)
 	{
 		if (fade)
@@ -103,7 +72,6 @@ bool j1SceneIntro::Update(float dt)
 		{
 			if (App->fadetoblack->Checkfadetoblack())
 			{
-				App->scene->ingame = true;
 				App->scene->Start();
 				main_menu->OpenClose(false);
 				goHouse = false;
@@ -118,7 +86,8 @@ bool j1SceneIntro::Update(float dt)
 bool j1SceneIntro::PostUpdate()
 {
 	bool ret = true;
-	if (App->scene->ingame == false )
+
+	if (App->scene->ingame == false)
 	{
 		if (menu)
 		{
@@ -139,15 +108,10 @@ bool j1SceneIntro::PostUpdate()
 		}
 		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
 		{
-			if (menu == false)
-			{
-				menu = true;
-			
-			}
-
 			if (main_menu->id_selected == 1)
 			{
 				App->cs_manager->StartCutscene(1);
+				App->scene->ingame = true;
 			}
 		}
 	}

@@ -45,7 +45,7 @@ bool j1Scene::Start()
 {
 	if (ingame == true)
 	{
-		LoadUi();
+		//LoadUi();
 		Load_new_map(1);
 	}
 
@@ -67,69 +67,6 @@ bool j1Scene::Update(float dt)
 {
 	if (ingame == true)
 	{
-		AssignValues(gems, player->gems);
-		AssignValues(bombs, player->bombs);
-		AssignValues(arrows, player->arrows);
-
-		player->ShowHearts();
-		force->Hitbox.w = player->charge;
-
-		/*if (App->input->GetKey(SDL_SCANCODE_F3) == KEY_DOWN)
-		{
-			switch_map = 7;
-		}*/
-
-		/*if (switch_map == 7)
-		{
-			if (fade == false)
-			{
-				App->fadetoblack->FadeToBlack();
-				fade = true;
-				now_switch = true;
-			}
-
-			if (App->fadetoblack->Checkfadetoblack() && now_switch)
-			{
-				now_switch = false;
-				if (App->map->CleanUp())
-				{
-					App->collision->EreseAllColiderPlayer();
-					if (player->equiped_item != nullptr)
-					{
-						weapon_equiped = player->equiped_item->Wtype;
-					}
-					App->entity_elements->DelteElements();
-					if (enemy.size() > 0)
-					{
-						enemy.clear();
-					}
-					if (items.size() > 0)
-					{
-						items.clear();
-					}
-					if (dynobjects.size() > 0)
-					{
-						dynobjects.clear();
-					}
-					if (pokemons.size() > 0)
-					{
-						pokemons.clear();
-					}
-					if (poketrainer.size() > 0)
-					{
-						poketrainer.clear();
-					}
-				}
-			}
-			if (App->fadetoblack->Checkfadefromblack())
-			{
-				fade = false;
-				switch_map = 0;
-				//Play music
-				//App->audio->PlayMusic("audio/music/POKEMON/PokemonWildPokemonBattle.ogg");
-			}
-		}*/
-
 		if (switch_map != 0 && switch_map != 7)
 		{
 			if (fade == false)
@@ -148,40 +85,9 @@ bool j1Scene::Update(float dt)
 				if (App->map->CleanUp())
 				{
 					App->collision->EreseAllColiderPlayer();
-					if (player->equiped_item != nullptr)
-					{
-						weapon_equiped = player->equiped_item->Wtype;
-					}
 					App->entity_elements->DelteElements();
-					if (enemy.size() > 0)
-					{
-						enemy.clear();
-					}
-					if (items.size() > 0)
-					{
-						items.clear();
-					}
-					if (dynobjects.size() > 0)
-					{
-						dynobjects.clear();
-					}
-					/*if (pokemons.size() > 0)
-					{
-						pokemons.clear();
-					}*/
-
-					/*if (player->pokedex.size() > 0)
-					{
-						player->pokedex.clear();
-					}*/
-
 					Load_new_map(switch_map);
 					id_map = switch_map;
-					if (switch_map == 4 && notrepeatmusic)
-					{
-						notrepeatmusic = false;
-						//App->audio->PlayMusic("audio/music/POKEMON/PokemonVictoryRoad.ogg");
-					}
 				}
 			}
 			if (App->fadetoblack->Checkfadefromblack())
@@ -200,11 +106,6 @@ bool j1Scene::Update(float dt)
 				}
 			}
 		}
-
-		if (switch_menu)
-		{
-			SwitchMenu(!inventory);
-		}
 	}
 
 	if (gamestate == INGAME)
@@ -212,10 +113,6 @@ bool j1Scene::Update(float dt)
 		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
 		{
 			App->cs_manager->StartCutscene(0);
-		}
-		if (App->input->GetKey(SDL_SCANCODE_O) == KEY_DOWN)
-		{
-			App->cs_manager->StartCutscene(1);
 		}
 	}
 
@@ -385,7 +282,6 @@ bool j1Scene::Load_new_map(int n)
 	{
 		player->score = 0;
 		player->gems = 0;
-		hud->OpenClose(true);
 	}
 
 	bool stop_rearch = false;
@@ -409,8 +305,6 @@ bool j1Scene::Load_new_map(int n)
 				player->position.x = newPosition.x;
 				player->position.y = newPosition.y;
 			}
-
-
 
 			//Enemies
 			pugi::xml_node temp_enemy = temp.child("enemies").child("enemy");
