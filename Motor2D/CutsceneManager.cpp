@@ -437,7 +437,6 @@ void Cutscene::StepDone()
 bool Cutscene::SetMap(pugi::xml_node& node)
 {
 	map_id = node.child("MAP").attribute("id").as_int(-1);
-	//tmx = node.attribute("file").as_string("");
 	return false;
 }
 
