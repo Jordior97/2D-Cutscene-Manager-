@@ -5,6 +5,7 @@
 #include "j1Audio.h"
 #include "j1Gui.h"
 #include "j1GuiElements.h"
+#include "j1Render.h"
 #include "p2Log.h"
 
 
@@ -298,7 +299,9 @@ bool Cutscene::DrawElements()
 			if (it._Ptr->_Myval->active == true)
 			{
 				CS_Image* image = dynamic_cast<CS_Image*>(*it);
-				App->render->Blit(image->GetTexture(), image->GetPos().x, image->GetPos().y, &image->GetRect());
+				App->render->Blit(image->GetTexture(), image->GetPos().x - App->render->camera.x, image->GetPos().y -
+					
+				App->render->camera.y, &image->GetRect());
 			}
 		}
 	}
@@ -464,6 +467,7 @@ bool CS_Step::DoAction(float dt)
 		break;
 	case ACT_PLAY:
 		action_name = "play";
+		Play();
 		break;
 	default:
 		action_name = "none";
@@ -661,6 +665,30 @@ void CS_Step::Play()
 	{
 		CS_SoundFx* fx = static_cast<CS_SoundFx*>(element);
 		fx->Play();
+	}
+}
+
+void CS_Step::StopMusic()
+{
+	if (element->GetType() == CS_MUSIC)
+	{
+		App->audio->StopMusic();
+	}
+}
+
+void CS_Step::ActiveElement()
+{
+	if (element->active == false)
+	{
+		element->active = true;
+	}
+}
+
+void CS_Step::DeactiveElement()
+{
+	if (element->active == true)
+	{
+		element->active = false;
 	}
 }
 

@@ -116,31 +116,6 @@ bool Player::Update(float dt)
 	// STATE MACHINE ------------------
 	if (App->scene->gamestate == INGAME)
 	{
-		//CHARGE BAR --------------
-		if (equiped_item != nullptr && equiped_item == hook && hook->in_use == false)
-		{
-			if ((App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_REPEAT || App->input_manager->EventPressed(INPUTEVENT::BUTTON_B) == EVENTSTATE::E_REPEAT) && charge <= 34)
-			{
-				charge++;
-			}
-			else if (App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP)
-			{
-				state = L_HOOKTHROWN;
-				anim_state = L_IDLE;
-				ThrowHookshot(charge);
-			}
-			else if (charge > 0)
-			{
-				charge--;
-			}
-		}
-		if (equiped_item != nullptr && equiped_item == bombmanager && App->input->GetKey(SDL_SCANCODE_SPACE) == KEY_UP && bombs>0)
-		{
-			bombmanager->Drop(position);
-			bombs--;
-			App->audio->PlayFx(6);
-		}
-
 		switch (state)
 		{
 		case L_IDLE:
@@ -222,8 +197,7 @@ bool Player::Update(float dt)
 	}*/
 	else if (App->scene->gamestate == GAMEOVER)
 	{
-		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN || App->input_manager->EventPressed(INPUTEVENT::BUTTON_START) == EVENTSTATE::E_DOWN ||
-			App->input_manager->EventPressed(INPUTEVENT::BUTTON_A) == EVENTSTATE::E_DOWN)
+		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
 		{
 			if (gameover != nullptr)
 				gameover->visible = false;
@@ -276,7 +250,6 @@ bool Player::Save()
 
 void Player::OnCollision(Collider* c1, Collider* c2)
 {
-
 	if (c1 != nullptr && c2 != nullptr)
 	{
 		if (c2->callback != nullptr)
@@ -284,7 +257,6 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 			if (c1 == collision_attack && c2->type == COLLIDER_DYNOBJECT && c2->callback->name != "chest" && c2->callback->name != "bigchest")
 			{
 				iPoint pos_dyn = App->map->WorldToMap(c2->callback->position.x, c2->callback->position.y);
-				//srand(time(NULL)); 		int canDrop = rand() % 5 + 1;
 				int canDrop = 1;
 				if (canDrop == 1)
 				{

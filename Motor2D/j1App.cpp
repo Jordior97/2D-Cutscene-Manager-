@@ -61,18 +61,20 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(map);
 	AddModule(pathfinding);
 	AddModule(font);
-
-	// scene last
 	AddModule(intro);
 	AddModule(scene);
 
 	//Add managers
 	AddModule(anim_manager);
 	AddModule(entity_elements);
-	AddModule(cs_manager);
 
 	//UI
 	AddModule(gui);
+
+	//CUTSCENE MANAGER
+	AddModule(cs_manager);
+
+	//COLLISION
 	AddModule(collision);
 
 	// render last to swap buffer

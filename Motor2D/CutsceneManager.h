@@ -157,8 +157,10 @@ public:
 	void LoadMovement(iPoint dest, int speed, const std::string& dir);
 	bool DoMovement(float dt);
 	bool CheckMovementCompleted(iPoint curr_pos);
-
 	void Play();
+	void StopMusic();
+	void ActiveElement();
+	void DeactiveElement();
 	//---------------------------
 
 	//UTILITY FUNCTIONS ------------

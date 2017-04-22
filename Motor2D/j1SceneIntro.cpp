@@ -19,6 +19,7 @@
 #include "j1DynamicObjects.h"
 #include "j1FileSystem.h"
 #include "j1Collision.h"
+#include "CutsceneManager.h"
 #include "j1AnimationManager.h"
 
 j1SceneIntro::j1SceneIntro() : j1Module()
@@ -44,9 +45,8 @@ bool j1SceneIntro::Start()
 	TitleScreen_letters = App->tex->Load("gui/title_screen/letters.png");
 	TitleScreen_bg = App->tex->Load("gui/title_screen/bg_anim.png");
 	Menu_bg = App->tex->Load("gui/title_screen/menu_bg.png");
-	Menu_Cursor = App->audio->LoadFx("audio/fx/LTTP_Menu_Cursor.wav");
+	//Menu_Cursor = App->audio->LoadFx("audio/fx/LTTP_Menu_Cursor.wav");
 	//App->audio->PlayMusic("audio/music/ZELDA/ZeldaScreenSelection.ogg");
-	App->input_manager->AddListener(this);
 	fade = true;
 	return true;
 }
@@ -148,7 +148,7 @@ bool j1SceneIntro::PostUpdate()
 			}
 			if (main_menu->id_selected == 1)
 			{
-				goHouse = true;
+				App->cs_manager->StartCutscene(1);
 			}
 		}
 	}
