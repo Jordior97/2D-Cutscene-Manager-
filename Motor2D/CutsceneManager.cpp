@@ -180,14 +180,14 @@ pugi::xml_node j1CutSceneManager::LoadXML(pugi::xml_document & config_file, std:
 {
 	pugi::xml_node ret;
 
-	char* buf;
+	char* buf = nullptr;
 	int size = App->fs->Load(file.c_str(), &buf);
 	pugi::xml_parse_result result = config_file.load_buffer(buf, size);
 	RELEASE(buf);
 
 	if (result == NULL)
 	{
-		LOG("Could not load map xml file config.xml. pugi error: %s", result.description());
+		LOG("Could not load map xml file. Pugi error: %s", result.description());
 	}
 	else
 	{
@@ -283,7 +283,7 @@ bool Cutscene::LoadNPC(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		this->elements.push_back(new CS_Element(CS_NPC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
+		this->elements.push_back(new CS_Element(CS_NPC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("active").as_bool(false), nullptr));
 		ret = true;
 	}
 	return ret;
@@ -294,7 +294,7 @@ bool Cutscene::LoadDynObject(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_DYNOBJECT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
+		elements.push_back(new CS_Element(CS_DYNOBJECT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("active").as_bool(false), nullptr));
 		ret = true;
 	}
 	return false;
@@ -305,7 +305,7 @@ bool Cutscene::LoadItem(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_ITEM, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
+		elements.push_back(new CS_Element(CS_ITEM, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("active").as_bool(false), nullptr));
 		ret = true;
 	}
 	return false;
@@ -318,7 +318,7 @@ bool Cutscene::LoadImg(pugi::xml_node& node)
 	{
 		iPoint pos(node.attribute("x").as_int(0), node.attribute("y").as_int(0));
 		SDL_Rect rect = { node.attribute("tex_x").as_int(0), node.attribute("tex_y").as_int(0), node.attribute("tex_w").as_int(0), node.attribute("tex_h").as_int(0) };
-		elements.push_back(new CS_Image(CS_IMAGE, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), node.attribute("file").as_string(""), rect, pos));
+		elements.push_back(new CS_Image(CS_IMAGE, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("active").as_bool(false), node.attribute("file").as_string(""), rect, pos));
 		ret = true;
 	}
 	return false;
@@ -329,7 +329,8 @@ bool Cutscene::LoadText(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_TEXT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
+		iPoint pos(node.attribute("x").as_int(0), node.attribute("y").as_int(0));
+		elements.push_back(new CS_Text(CS_TEXT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("active").as_bool(false), nullptr, pos, node.attribute("text").as_string("")));
 		ret = true;
 	}
 	return false;
@@ -340,7 +341,7 @@ bool Cutscene::LoadMusic(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_MUSIC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
+		elements.push_back(new CS_Music(CS_MUSIC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("active").as_bool(false), node.attribute("path").as_string("")));
 		ret = true;
 	}
 	return false;
@@ -351,7 +352,7 @@ bool Cutscene::LoadFx(pugi::xml_node& node)
 	bool ret = false;
 	if (node != NULL)
 	{
-		elements.push_back(new CS_Element(CS_FX, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("update").as_bool(false), nullptr));
+		elements.push_back(new CS_SoundFx(CS_FX, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("active").as_bool(false), node.attribute("path").as_string(""),node.attribute("loops").as_uint()));
 		ret = true;
 	}
 	return false;
