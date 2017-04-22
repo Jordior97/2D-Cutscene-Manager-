@@ -50,6 +50,8 @@ public:
 
 	void OnInputCallback(INPUTEVENT, EVENTSTATE);
 
+	void LoadHouseMap();
+
 private:
 	//Start screen
 	SDL_Texture*	TitleScreen_letters = nullptr;

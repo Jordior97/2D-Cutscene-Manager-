@@ -72,7 +72,6 @@ bool Player::Start()
 	/*timetoplay.Start();*/
 	canSwitchMap = true;
 	collision_feet = App->collision->AddCollider({ position.x - offset_x, position.y - offset_y, 14, 14 }, COLLIDER_PLAYER, this);
-	App->input_manager->AddListener(this);
 	game_timer.Start();
 	return ret;
 }

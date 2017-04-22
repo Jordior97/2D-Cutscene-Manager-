@@ -42,12 +42,16 @@ bool j1SceneIntro::Awake()
 // Called before the first frame
 bool j1SceneIntro::Start()
 {
-	TitleScreen_letters = App->tex->Load("gui/title_screen/letters.png");
-	TitleScreen_bg = App->tex->Load("gui/title_screen/bg_anim.png");
-	Menu_bg = App->tex->Load("gui/title_screen/menu_bg.png");
+	//TitleScreen_letters = App->tex->Load("gui/title_screen/letters.png");
+	//TitleScreen_bg = App->tex->Load("gui/title_screen/bg_anim.png");
 	//Menu_Cursor = App->audio->LoadFx("audio/fx/LTTP_Menu_Cursor.wav");
 	//App->audio->PlayMusic("audio/music/ZELDA/ZeldaScreenSelection.ogg");
 	fade = true;
+	menu = true;
+	bg_anim = 0;
+	Menu_bg = App->tex->Load("gui/title_screen/menu_bg.png");
+	TitleScreen_letters = App->tex->Load("gui/title_screen/letters_menu.png");
+	LoadMainMenu();
 	return true;
 }
 
@@ -142,10 +146,9 @@ bool j1SceneIntro::PostUpdate()
 			if (menu == false)
 			{
 				menu = true;
-				bg_anim = 0;
-				TitleScreen_letters = App->tex->Load("gui/title_screen/letters_menu.png");
-				LoadMainMenu();
+			
 			}
+
 			if (main_menu->id_selected == 1)
 			{
 				App->cs_manager->StartCutscene(1);
@@ -245,6 +248,11 @@ void j1SceneIntro::OnInputCallback(INPUTEVENT action, EVENTSTATE state)
 			break;
 		}
 	}
+}
+
+void j1SceneIntro::LoadHouseMap()
+{
+	goHouse = true;
 }
 
 // Called before quitting

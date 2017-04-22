@@ -238,7 +238,7 @@ public:
 	bool PostUpdate();
 
 	// Called before quitting
-	//bool CleanUp();
+	bool CleanUp();
 	
 
 	//void Clear();

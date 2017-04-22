@@ -370,8 +370,6 @@ bool j1Map::CleanUp()
 	map_file.reset();
 
 	return true;
-
-	return true;
 }
 
 // Load new map

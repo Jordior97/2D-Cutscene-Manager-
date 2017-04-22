@@ -2,6 +2,7 @@
 #include "j1FileSystem.h"
 #include "SceneElements.h"
 #include "j1Scene.h"
+#include "j1SceneIntro.h"
 #include "j1Audio.h"
 #include "j1Gui.h"
 #include "j1GuiElements.h"
@@ -167,6 +168,12 @@ bool j1CutSceneManager::FinishCutscene()
 		if (active_cutscene->isFinished() == true)
 		{
 			LOG("%s cutscene deactivated", active_cutscene->name.c_str());
+			
+			if (active_cutscene->map_id == 1)
+			{
+				App->intro->LoadHouseMap();
+			}
+
 			active_cutscene = nullptr;
 			ret = true;
 			App->scene->ChangeState(INGAME);
@@ -182,6 +189,11 @@ bool j1CutSceneManager::PostUpdate()
 		active_cutscene->DrawElements();
 	}
 	return true;
+}
+
+bool j1CutSceneManager::CleanUp()
+{
+	return false;
 }
 
 
@@ -831,34 +843,9 @@ Text* CS_Text::GetText() const
 /*CS_NPC::CS_NPC(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos):
 	CS_Element(type,n,name,active,path)
 {
-	App->entity_elements->C
+	//App->entity_elements->CreateEntity();
 }
 
 CS_NPC::~CS_NPC()
-{
-}*/
-
-
-//CS ACTIONS ----------------------------------
-/*CS_Action::CS_Action(Action_Type type):type(type)
-{
-}
-
-CS_Action::~CS_Action()
-{
-}
-
-bool CS_Action::PerformAction(CS_Element* element)
-{
-	return true;
-}
-
-// ------------------------------------------------
-
-CS_Movement::CS_Movement(Action_Type type, iPoint dest) :CS_Action(type), dest(dest)
-{
-}
-
-CS_Movement::~CS_Movement()
 {
 }*/
