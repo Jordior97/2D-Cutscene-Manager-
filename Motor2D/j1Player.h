@@ -111,7 +111,6 @@ public:
 
 	bool camera_follow = false;
 
-	//Gameover TODO MARC
 	Image* gameover = nullptr;
 	Image* winover = nullptr;
 
@@ -120,7 +119,6 @@ public:
 
 private:
 
-	//player stats TODO JORDI - ELLIOT
 	iPoint hp_hearts;//.X shows MAX HEARTS and .Y ACTUAL LIFE (1 heart on hud == 2 hp_hearts)
 	int actual_floor = 0;
 

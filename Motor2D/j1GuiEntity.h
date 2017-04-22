@@ -34,7 +34,7 @@ public:
 	uint id;
 	std::string identifier;
 	std::vector<j1GuiEntity*> elements;
-	j1GuiEntity* parent; //TODO LOW: implement this as callbacks for tree purpouses in elements constructors
+	j1GuiEntity* parent;
 	int vector_pos;
 };
 

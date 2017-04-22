@@ -45,13 +45,12 @@ public:
 	Collider* collision_feet = nullptr;
 	j1Timer orient_time;
 
-	//
 	Direction dir_hit;
 	iPoint prev_position;
 	j1Timer knockback_time;
 
 protected:
-	uint speed; //TODO JORDI
+	uint speed; 
 };
 
 #endif // __J1CREATURE_H__

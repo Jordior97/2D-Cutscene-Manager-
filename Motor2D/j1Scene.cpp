@@ -47,21 +47,6 @@ bool j1Scene::Start()
 	{
 		LoadUi();
 		Load_new_map(1);
-		App->audio->PlayMusic("audio/music/ZELDA/Zeldakakariko_village.ogg");
-		App->audio->LoadFx("audio/fx/LTTP_Pause_Open.wav"); //2
-		App->audio->LoadFx("audio/fx/LTTP_Pause_Close.wav"); //3
-		App->audio->LoadFx("audio/fx/LTTP_Rupee1.wav");//4
-		App->audio->LoadFx("audio/fx/LTTP_Sword_Attack.wav");//5
-		App->audio->LoadFx("audio/fx/LTTP_Bomb_Lay.wav");//6
-		App->audio->LoadFx("audio/fx/LTTP_Bomb_Explosion.wav");//7
-		App->audio->LoadFx("audio/fx/PKMN_Scratch_Attack.wav");//8
-		App->audio->LoadFx("audio/fx/PKMN_Blaziken_Attack.wav");//9
-		App->audio->LoadFx("audio/fx/PKMN_Tackle_Attack.wav");//10
-		App->audio->LoadFx("audio/fx/LTTP_Enemy_Death.wav");//11
-		App->audio->LoadFx("audio/fx/LTTP_Enemy_Hit.wav");//12
-		App->audio->LoadFx("audio/fx/LTTP_Link_Hurt.wav");//13
-		App->audio->LoadFx("audio/fx/LTTP_Fall.wav");//14
-		App->audio->LoadFx("audio/fx/LTTP_Chest_Open.wav");//15
 	}
 
 	inventory = false;
@@ -195,7 +180,7 @@ bool j1Scene::Update(float dt)
 					if (switch_map == 4 && notrepeatmusic)
 					{
 						notrepeatmusic = false;
-						App->audio->PlayMusic("audio/music/POKEMON/PokemonVictoryRoad.ogg");
+						//App->audio->PlayMusic("audio/music/POKEMON/PokemonVictoryRoad.ogg");
 					}
 				}
 			}
@@ -402,17 +387,6 @@ bool j1Scene::Load_new_map(int n)
 		player->gems = 0;
 		hud->OpenClose(true);
 	}
-	/*//SET WEAPONS WHEN MAP CHANGES
-	if (weapon_equiped == BOMB)
-	{
-		player->bombmanager = App->entity_elements->CreateBombContainer();
-		player->equiped_item = (Weapon*)player->bombmanager;
-	}
-	if (weapon_equiped == HOOKSHOT)
-	{
-		player->hook = App->entity_elements->CreateHookshot();
-		player->equiped_item = (Weapon*)player->hook;
-	}*/
 
 	bool stop_rearch = false;
 
@@ -450,32 +424,10 @@ bool j1Scene::Load_new_map(int n)
 			std::string name_map = temp.attribute("file").as_string("");
 			App->map->Load(name_map.c_str(), n);
 
-			//Trainers
-			/*if (temp.child("trainer"))
-			{
-				poketrainer.push_back(App->entity_elements->CreateTrainer(temp.child("trainer"), 1));
-			}*/
-
-			//Pokemons
-			/*pugi::xml_node temp_pokemon = temp.child("pokemons").child("pokemon");
-			for (int i = 0; i < temp.child("pokemons").attribute("num").as_int(0); i++)
-			{
-				bool mode_stone = temp_pokemon.attribute("mode_stone").as_bool(false);
-				if (temp_pokemon.attribute("id").as_int(0) == 2 && mode_stone == false)
-				{
-					pokemons.push_back(App->entity_elements->CreatePokemon(temp_pokemon, temp_pokemon.attribute("id").as_int(0)));
-				}
-				else 
-				{
-					pokemons.push_back(App->entity_elements->CreatePokemon(temp_pokemon, temp_pokemon.attribute("id").as_int(0)));
-				}
-				temp_pokemon = temp_pokemon.next_sibling();
-			}*/
-
-
 			//Camera position
 			int scale = App->win->GetScale();
 			player->camera_follow = temp.child("camera").attribute("follow").as_bool();
+			
 			if (player->camera_follow == true)
 			{
 				int h = App->win->GetHeight() / scale;
@@ -516,7 +468,6 @@ bool j1Scene::Load_new_map(int n)
 int j1Scene::IdMap()
 {
 	return id_map;
-
 }
 
 

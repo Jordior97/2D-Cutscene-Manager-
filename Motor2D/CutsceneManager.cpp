@@ -174,6 +174,15 @@ bool j1CutSceneManager::FinishCutscene()
 	return ret;
 }
 
+bool j1CutSceneManager::PostUpdate()
+{
+	if (active_cutscene != nullptr)
+	{
+		active_cutscene->DrawElements();
+	}
+	return true;
+}
+
 
 //Read from .xml cutscene file
 pugi::xml_node j1CutSceneManager::LoadXML(pugi::xml_document & config_file, std::string file) const
@@ -250,6 +259,7 @@ bool Cutscene::Update(float dt)
 	bool active = false;
 	//Iterate the steps of the cutscene to update the active ones
 	std::list<CS_Step*>::iterator temp = steps.begin();
+	//UPDATE STEPS (MODIFY ELEMENTS) -------------------------
 	while (temp != steps.end())
 	{
 		CS_Step* step = *temp;
@@ -265,9 +275,9 @@ bool Cutscene::Update(float dt)
 		{
 			step->DoAction(dt);
 		}
-
 		temp++;
 	}
+	// ---------------------------
 
 	//If all stpes have been reproduced, finish the cutscene
 	if (steps_done >= num_steps)
@@ -276,6 +286,24 @@ bool Cutscene::Update(float dt)
 	}
 
 	return ret;
+}
+
+bool Cutscene::DrawElements()
+{
+	//UPDATE ELEMENTS ---------------------------------------
+	for (std::list<CS_Element*>::iterator it = elements.begin(); it != elements.end(); it++)
+	{
+		if (it._Ptr->_Myval->GetType() == CS_IMAGE)
+		{
+			if (it._Ptr->_Myval->active == true)
+			{
+				CS_Image* image = dynamic_cast<CS_Image*>(*it);
+				App->render->Blit(image->GetTexture(), image->GetPos().x, image->GetPos().y, &image->GetRect());
+			}
+		}
+	}
+	//--------------------------------------------------------------------
+	return false;
 }
 
 bool Cutscene::LoadNPC(pugi::xml_node& node)
@@ -655,7 +683,10 @@ bool CS_Step::isFinished() const
 
 // CS IMAGE -----------------
 CS_Image::CS_Image(CS_Type type, int n, const char* name, bool active, const char* path, SDL_Rect rect, iPoint pos):
-	CS_Element(type, n, name, active, path),rect(rect),pos(pos){}
+	CS_Element(type, n, name, active, path),rect(rect),pos(pos)
+{
+	tex = App->tex->Load(path);
+}
 
 CS_Image::~CS_Image()
 {

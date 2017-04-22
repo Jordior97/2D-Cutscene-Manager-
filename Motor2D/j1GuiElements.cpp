@@ -282,7 +282,6 @@ Dialogue::Dialogue(const char*string) :j1GuiEntity({ 0,82,190,62 }, { 40,150 })
 {
 	int win_marge = (App->win->GetWidth() - App->scene->start_menu->Hitbox.w*App->win->GetScale()) / 4;
 	position = { win_marge + 40,150 };
-	//TODO MID: Actual font needs a blue outline to match the original one, need to code that or edit the font creating the outline
 	type = DIALOGUE;
 	lines = App->gui->CreateText(GANONF, string, 29, { position.x + 10, 0 }, 30, { 255,255,255,255 }, false);
 
@@ -292,7 +291,7 @@ void Dialogue::Draw()
 {
 
 	App->render->Blit((SDL_Texture*)App->gui->GetAtlas(), position.x, position.y, &Hitbox, 0);
-	SDL_Rect viewport = { 0,312,Hitbox.w * 3,Hitbox.h*1.5 + 5 };//TODO LOW REMOVE MAGIC NUMBERS
+	SDL_Rect viewport = { 0,312,Hitbox.w * 3,Hitbox.h*1.5 + 5 };
 	SDL_RenderSetViewport(App->render->renderer, &viewport);
 	lines->Draw();
 	Text* item = lines;
@@ -318,7 +317,7 @@ void Dialogue::PushLine(bool push)
 	if (end == false)
 	{
 		Text* item = lines;
-		//TODO LOW: Fix this sh done with magic numbers
+
 		while (item != nullptr)
 		{
 			item->position.y -= (Hitbox.h / 8) + diferential; //+ 0.5
@@ -341,7 +340,6 @@ void Dialogue::PushLine(bool push)
 	}
 }
 
-//TODO WORK on clear dialogue lines when u delete dialog
 /*void Dialogue::Clear(int more_erased)
 {
 	Text* item = lines;
@@ -413,7 +411,7 @@ void Selector::Handle_Input()
 			App->scene->gamestate = TIMETOPLAY;
 			App->scene->player->SetState(L_IDLE);
 			App->scene->player->SetAnimState(L_IDLE);
-			//App->scene->player->timetoplay.Start(); //TODO JORDI - ELLIOT
+			//App->scene->player->timetoplay.Start();
 		}
 	}
 }

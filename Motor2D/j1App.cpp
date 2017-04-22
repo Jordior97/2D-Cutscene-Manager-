@@ -67,14 +67,12 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(scene);
 
 	//Add managers
-	AddModule(cs_manager);
 	AddModule(anim_manager);
 	AddModule(entity_elements);
+	AddModule(cs_manager);
 
 	//UI
-	AddModule(gui);//
-	//Player
-	//AddModule(player); //TODO LOW
+	AddModule(gui);
 	AddModule(collision);
 
 	// render last to swap buffer
@@ -359,7 +357,7 @@ bool j1App::CleanUp()
 	item = modules.end();
 	item--;
 
-	while(item != modules.begin() && ret == true)//TODO HIGH -> need inverse_iterator
+	while(item != modules.begin() && ret == true)
 	{
 		ret = item._Ptr->_Myval->CleanUp();
 		item--;
@@ -463,7 +461,7 @@ bool j1App::LoadGameNow()
 			if(ret == true)
 				LOG("...finished loading");
 			else
-				LOG("...loading process interrupted with error on module %s", (item._Ptr->_Myval != NULL) ? item._Ptr->_Myval->name.c_str() : "unknown");//TODO LOW
+				LOG("...loading process interrupted with error on module %s", (item._Ptr->_Myval != NULL) ? item._Ptr->_Myval->name.c_str() : "unknown");
 		}
 		else
 			LOG("Could not parse game state xml file %s. pugi error: %s", load_game.c_str(), result.description());

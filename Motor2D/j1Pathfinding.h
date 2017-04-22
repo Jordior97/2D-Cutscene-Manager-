@@ -109,7 +109,7 @@ struct compare
 struct PathList
 {
 	// Looks for a node in this list and returns it's list node or NULL
-	//p2List_item<PathNode>* Find(const iPoint& point) const; TODO - p2list
+	//p2List_item<PathNode>* Find(const iPoint& point) const;
 	std::list<PathNode>::iterator Find(const iPoint& point);
 
 	// Returns the Pathnode with lowest score in this list or NULL if empty

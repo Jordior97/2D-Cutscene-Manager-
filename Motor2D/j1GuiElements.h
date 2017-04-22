@@ -120,7 +120,7 @@ public:
 public:
 	void Update();
 	void Handle_Input();
-	void OnInputCallback(INPUTEVENT, EVENTSTATE); //TODO LOW -> check if its better to put button inputs here or not
+	void OnInputCallback(INPUTEVENT, EVENTSTATE);
 public:
 	void AddElement(j1GuiEntity* element);
 	void ResetInventory();

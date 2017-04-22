@@ -107,7 +107,6 @@ bool j1AnimationManager::Start()
 
 bool j1AnimationManager::CleanUp()
 {
-	//TODO MEDIUM -> Fill this
 	return true;
 }
 

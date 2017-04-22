@@ -84,7 +84,7 @@ bool Player::PreUpdate()
 	return ret;
 }
 
-bool Player::Update(float dt)//TODO HIGH -> I delete dt but i thing that we need.
+bool Player::Update(float dt)
 {
 	bool ret = true;
 
@@ -233,10 +233,9 @@ bool Player::Update(float dt)//TODO HIGH -> I delete dt but i thing that we need
 		}
 	}
 
-
-	if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN && App->fadetoblack->IsFading())
+	/*if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN && App->fadetoblack->IsFading())
 	{
-		if (App->scene->inventory) //TODO LOW -> If pressed to fast you can listen fx twice.
+		if (App->scene->inventory) //If pressed to fast you can listen fx twice.
 		{
 			App->audio->PlayFx(3);
 		}
@@ -247,7 +246,7 @@ bool Player::Update(float dt)//TODO HIGH -> I delete dt but i thing that we need
 
 		App->scene->switch_menu = true;
 		App->scene->gamestate = INMENU;
-	}
+	}*/
 
 	//Collision follow the player
 	collision_feet->SetPos(position.x - offset_x, position.y - offset_y);
@@ -257,9 +256,8 @@ bool Player::Update(float dt)//TODO HIGH -> I delete dt but i thing that we need
 
 void Player::Draw()
 {
-
 	//Draw player
-	App->anim_manager->Drawing_Manager(anim_state, direction, position, LINK);  //TODO LOW-> ID magic number, need change!!
+	App->anim_manager->Drawing_Manager(anim_state, direction, position, LINK); 
 }
 
 bool Player::CleanUp()
@@ -319,8 +317,7 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 				position.x = c2->callback->position.x + c2->rect.w*0.5;
 				position.y = c2->callback->position.y + c2->rect.h;
 				DynamicObjects* temp = (DynamicObjects*)c2->callback;
-				App->scene->items.push_back(App->entity_elements->CreateItem(temp->item_id, position)); //TODO LOW call Drop item() function
-				score += 75;
+				App->scene->items.push_back(App->entity_elements->CreateItem(temp->item_id, position));
 				App->entity_elements->DeleteDynObject((DynamicObjects*)c2->callback);
 			}
 		}
@@ -333,7 +330,7 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 			{
 				if (c2->callback->name == "rupee")
 				{
-					App->audio->PlayFx(4);
+					//App->audio->PlayFx(4);
 					gems++;
 				}
 				if (c2->callback->name == "bomb")
@@ -372,7 +369,7 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 		{
 			if (state != L_HIT && invincible_timer.ReadSec() >= 1)
 			{
-				App->audio->PlayFx(13);
+				//App->audio->PlayFx(13);
 				state = L_HIT;
 				anim_state = L_IDLE;
 				hurt_timer.Start();
@@ -385,7 +382,7 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 
 		if (c1 == collision_feet && c2->type == COLLIDER_SWITCH_MAP)
 		{
-			if (canSwitchMap == false) // TODO LOW -> delete canSwitchMap
+			if (canSwitchMap == false)
 			{
 				canSwitchMap = true;
 			}
@@ -441,7 +438,7 @@ void Player::OnCollision(Collider* c1, Collider* c2)
 }
 
 
-bool Player::Camera_inside() //TODO JORDI -> RENDER
+bool Player::Camera_inside()
 {
 	//256x224
 	if (camera_follow == true)
@@ -513,7 +510,7 @@ bool Player::Camera_inside() //TODO JORDI -> RENDER
 	return true;
 }
 
-bool Player::Camera_inside(iPoint pos) //TODO JORDI -> RENDER
+bool Player::Camera_inside(iPoint pos)
 {
 	//256x224
 	if (camera_follow == true)
@@ -823,22 +820,22 @@ bool Player::Attack()
 		attacker = true;
 		if (direction == UP)
 		{
-			App->audio->PlayFx(5);
+			//App->audio->PlayFx(5);
 			collision_attack = App->collision->AddCollider({ position.x - 4, position.y - offset_y - 16, 8, 20 }, COLLIDER_SWORD, this);
 		}
 		else if (direction == RIGHT)
 		{
-			App->audio->PlayFx(5);
+			//App->audio->PlayFx(5);
 			collision_attack = App->collision->AddCollider({ position.x + 3, position.y - 8, 20, 8 }, COLLIDER_SWORD, this);
 		}
 		else if (direction == DOWN)
 		{
-			App->audio->PlayFx(5);
+			//App->audio->PlayFx(5);
 			collision_attack = App->collision->AddCollider({ position.x - 4, position.y - 2, 8, 20}, COLLIDER_SWORD, this);
 		}
 		else if (direction == LEFT)
 		{
-			App->audio->PlayFx(5);
+			//App->audio->PlayFx(5);
 			collision_attack = App->collision->AddCollider({ position.x - 22, position.y - 7, 20, 8 }, COLLIDER_SWORD, this);
 		}
 	}
@@ -1025,7 +1022,6 @@ bool Player::Unequip()
 	return ret;
 }
 
-//HOOKSHOT  TODO JORDI ----------------------------------
 void Player::KeepGoing()
 {
 	if (hook != nullptr)

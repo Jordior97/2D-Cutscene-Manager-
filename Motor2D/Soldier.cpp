@@ -13,7 +13,7 @@
 
 Soldier::Soldier():NPC()
 {
-	name = "enemies"; //TODO need change name to "Soldier".
+	name = "enemies"; 
 	type = CREATURE;
 	srand(time(NULL));
 }
@@ -96,17 +96,13 @@ bool Soldier::Start()
 	{
 		offset_x = 8;
 		offset_y = 15;
-		//marge = 12;
 		state = S_IDLE;
 		anim_state = S_IDLE;
 		speed = 40;
-		//offset_x = 15;
-		//offset_y = 15;
 		timetoplay = SDL_GetTicks();
 		reset_distance = false;
 		reset_run = true;
 
-		// Test for Vertical Slice /// TODO MED-> read stats from XML
 		radar = 75;
 		chase_speed = 60;
 	}

@@ -65,7 +65,6 @@ void Hookshot::SetRange(float charge)
 
 HookState Hookshot::ReachObjective(int actual_floor)
 {
-	//TODO HIGH -> made it functional to Zelda World
 	const MapLayer* meta_layer = App->map->data.layers[2]; // metasudo layer
 	iPoint map_pos = App->map->WorldToMap(position.x, position.y);
 	int hook_tile = meta_layer->Get(map_pos.x, map_pos.y);
@@ -296,9 +295,6 @@ void BombContainer::CleanContainer()
 	bombs.pop_front();
 }
 
-
-
-//--------------------------------- BOMB: TODO HIGH -> modify animation management.
 Bomb::Bomb(iPoint position, BombContainer*container) : position(position), container(container)
 {
 	radius = 20;

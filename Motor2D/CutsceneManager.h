@@ -28,10 +28,10 @@ public:
 	// ------------------------
 
 	std::string name;
+	bool active = false;
 
 protected:
 	CS_Type type = CS_NONE;
-	bool active = false;
 	int n = -1;
 	std::string path;
 };
@@ -198,6 +198,7 @@ public:
 	bool Start();
 
 	bool Update(float dt);
+	bool DrawElements();
 
 	//LOAD ELEMENTS FUNCTIONS -------
 	bool LoadNPC(pugi::xml_node&);
@@ -263,7 +264,7 @@ public:
 	bool FinishCutscene();
 
 	// Called before all Updates
-	//bool PostUpdate();
+	bool PostUpdate();
 
 	// Called before quitting
 	//bool CleanUp();

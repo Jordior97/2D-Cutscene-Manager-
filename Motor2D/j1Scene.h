@@ -78,10 +78,8 @@ public:
 	Image* force, *gems, *bombs, *arrows,*hp;
 	Player* player = nullptr;
 	std::list<Soldier*> enemy;
-	//std::list<Pokemon*> pokemons;
 	std::list<Item*> items;
 	std::list<DynamicObjects*> dynobjects;
-	//std::list<PokeTrainer*> poketrainer;
 
 	pugi::xml_node		config;
 

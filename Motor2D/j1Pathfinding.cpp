@@ -75,7 +75,7 @@ PathNode * j1PathFinding::GetPathNode(int x, int y)
 	return &map_node[(y*width) + x];
 }
 
-// To request all tiles involved in the last generated path //TODO LOW -> const_iterator??
+// To request all tiles involved in the last generated path 
 
 
 // PathList ------------------------------------------------------------------------
@@ -100,7 +100,7 @@ PathNode * j1PathFinding::GetPathNode(int x, int y)
 /*std::list<PathNode>::const_iterator PathList::GetNodeLowestScore() const
 {
 	//p2List_item<PathNode>* ret = NULL;
-	//TODO p1 -> const_iterator?? something wrong...
+	const_iterator?? something wrong...
 	std::list<PathNode>::const_iterator ret;
 	int min = 65535;
 
