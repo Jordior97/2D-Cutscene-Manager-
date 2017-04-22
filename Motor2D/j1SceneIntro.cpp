@@ -87,12 +87,8 @@ bool j1SceneIntro::Update(float dt)
 		}
 		else
 		{
-			if (bg_anim > -70) {
-				bg_anim -= 0.2;
-			}
-			App->render->Blit(Menu_bg, 0, 0, NULL, NULL, false, NULL, NULL, NULL, { bg_anim,0 });
+			App->render->Blit(Menu_bg, 0, 0, NULL, NULL, false, NULL, NULL, NULL, { -70,0 });
 			App->render->Blit(TitleScreen_letters, -10, 0, NULL, NULL, false);
-
 		}
 	}
 	if (goHouse)

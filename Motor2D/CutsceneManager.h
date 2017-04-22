@@ -10,6 +10,7 @@ enum CS_Type { CS_IMAGE, CS_TEXT, CS_NPC, CS_DYNOBJECT, CS_ITEM, CS_MUSIC, CS_FX
 enum Action_Type { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_PLAY, ACT_STOP, ACT_NONE };
 enum Dir_Type { CS_UP, CS_DOWN, CS_LEFT, CS_RIGHT, NO_DIR };
 
+class SceneElement;
 class j1Timer;
 class Cutscene;
 class Text;
@@ -36,18 +37,17 @@ protected:
 	std::string path;
 };
 
-/*class CS_NPC: public CS_Element
+class CS_NPC: public CS_Element
 {
 	CS_NPC(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos);
 	~CS_NPC();
 
 	SceneElement* GetEntity() const;
-	void SetNull();
 	void SetEntity(SceneElement* e);
 
 private:
 	SceneElement*	entity;
-};*/
+};
 
 class CS_Image : public CS_Element
 {

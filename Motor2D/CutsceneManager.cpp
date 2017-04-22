@@ -840,12 +840,24 @@ Text* CS_Text::GetText() const
 }
 // -----------------------------------------------
 
-/*CS_NPC::CS_NPC(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos):
-	CS_Element(type,n,name,active,path)
+
+//CS NPC ------------------------------------------------
+CS_NPC::CS_NPC(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos):
+	CS_Element(type, n, name, active, path)
 {
 	//App->entity_elements->CreateEntity();
 }
 
 CS_NPC::~CS_NPC()
 {
-}*/
+}
+
+SceneElement* CS_NPC::GetEntity() const
+{
+	return nullptr;
+}
+
+void CS_NPC::SetEntity(SceneElement* e)
+{
+}
+// ------------------------------------------------------
