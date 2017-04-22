@@ -7,7 +7,7 @@
 #include <string>
 
 enum CS_Type { CS_IMAGE, CS_TEXT, CS_NPC, CS_DYNOBJECT, CS_ITEM, CS_MUSIC, CS_FX, CS_NONE };
-enum Action_Type { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_PLAY, ACT_NONE };
+enum Action_Type { ACT_ENABLE, ACT_DISABLE, ACT_MOVE, ACT_PLAY, ACT_STOP, ACT_NONE };
 enum Dir_Type { CS_UP, CS_DOWN, CS_LEFT, CS_RIGHT, NO_DIR };
 
 class j1Timer;
@@ -110,34 +110,6 @@ private:
 	uint loops = 0;
 };
 
-/*class CS_Action
-{
-public:
-	CS_Action(Action_Type type);
-	virtual ~CS_Action();
-
-	virtual bool PerformAction(CS_Element* element);
-
-	std::string name;
-
-protected:
-	Action_Type type;
-
-};
-
-class CS_Movement: public CS_Action 
-{
-public:
-	CS_Movement(Action_Type type, iPoint dest);
-	~CS_Movement();
-
-	bool PerformAction(CS_Element* element);
-
-public:
-	iPoint origin = { 0, 0 };
-	iPoint dest = { 0, 0 };
-
-};*/
 
 class CS_Step
 {
@@ -160,7 +132,7 @@ public:
 	void Play();
 	void StopMusic();
 	void ActiveElement();
-	void DeactiveElement();
+	void DisableElement();
 	//---------------------------
 
 	//UTILITY FUNCTIONS ------------
@@ -186,9 +158,6 @@ private:
 	iPoint dest = { 0, 0 };
 	int mov_speed = 0;
 	Dir_Type direction = NO_DIR;
-
-
-
 
 };
 

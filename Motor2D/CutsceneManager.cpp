@@ -455,9 +455,11 @@ bool CS_Step::DoAction(float dt)
 	{
 	case ACT_DISABLE:
 		action_name = "disable";
+		DisableElement();
 		break;
 	case ACT_ENABLE:
 		action_name = "enable";
+		ActiveElement();
 		break;
 	case ACT_MOVE:
 		action_name = "move";
@@ -466,6 +468,10 @@ bool CS_Step::DoAction(float dt)
 	case ACT_PLAY:
 		action_name = "play";
 		Play();
+		break;
+	case ACT_STOP:
+		action_name = "stop";
+		StopMusic();
 		break;
 	default:
 		action_name = "none";
@@ -530,6 +536,10 @@ void CS_Step::SetAction(pugi::xml_node& node)
 	else if (action_type == "play")
 	{
 		act_type = ACT_PLAY;
+	}
+	else if (action_type == "stop")
+	{
+		act_type = ACT_STOP;
 	}
 	else
 	{
@@ -682,7 +692,7 @@ void CS_Step::ActiveElement()
 	}
 }
 
-void CS_Step::DeactiveElement()
+void CS_Step::DisableElement()
 {
 	if (element->active == true)
 	{
