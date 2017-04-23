@@ -9,6 +9,17 @@
 #include "j1Render.h"
 #include "p2Log.h"
 
+//TODO 5.1: open the IntroCutscene.xml (in data.zip, in cutscenes folder) and fill THESE ELEMENTS correctly with this info:
+//Image -> n = 0; name = BackgroundPokemon; x = -100; y = 0; tex_x = 0; tex_y = 0; tex_w = 1080; tex_h = 514; active = false; file = textures/PokemonBackground.png;
+//Music -> n = 7; name = MainMusic; path = audio/music/ZELDA/ZeldaMainTitle.ogg;
+//Fx -> n = 8; name = GoodSound; path = audio/fx/Rupee.wav; loops = 0;
+
+//TODO 6.1: open the IntroCutscene.xml and fill THESE STEPS correctly with this info:
+//Step 0 -> n = 0; start = 0; duration = -1; 
+//			element -> name = BackgroundZelda action = move; dir = right;
+//				movement -> dest_x = -100; dest_y = 0; speed = 3;
+//Step 9 -> n = 9; start = 9; duration = 0; 
+//			element -> name = GoodSound action = play; 
 
 // CUTSCEME MANAGER -----------------------------------
 j1CutSceneManager::j1CutSceneManager()
@@ -27,6 +38,7 @@ bool j1CutSceneManager::Awake(pugi::xml_node& config)
 	{
 		ret = true;
 
+		//TODO 2: fill the paths list with the names of the config.xml file. 
 		//Load all path names in a list to access the concrete cutscene in the future.
 		for (pugi::xml_node temp = config.child("file"); temp != NULL; temp = temp.next_sibling())
 		{
@@ -44,13 +56,15 @@ bool j1CutSceneManager::LoadCutscene(uint id)
 	pugi::xml_node		elements_node;
 	pugi::xml_node		steps_node;
 	pugi::xml_node		temp;
-	std::list<std::string>::iterator file = paths.begin();
 	uint index = 0;
+	std::list<std::string>::iterator file = paths.begin();
 	for (; file != paths.end(); file++)
 	{
+
+		//TODO 4: stop iterating when the correct path is reached (take care of the passed id)
 		if (index == id) //Check the load order of the paths to set the correct cutscene
 		{
-			//Load XML
+			//Load XML cutscene file
 			cutscene_node = LoadXML(cutscene_file, file._Ptr->_Myval);
 
 			//Create temp pointer
@@ -71,16 +85,18 @@ bool j1CutSceneManager::LoadCutscene(uint id)
 				temp_cutscene->LoadNPC(temp);
 			}
 
-			//Load Images
-			for (temp = elements_node.child("IMAGES").child("image"); temp != NULL; temp = temp.next_sibling("image"))
-			{
-				temp_cutscene->LoadImg(temp);
-			}
-
 			//Load Texts
 			for (temp = elements_node.child("TEXTS").child("text"); temp != NULL; temp = temp.next_sibling("text"))
 			{
 				temp_cutscene->LoadText(temp);
+			}
+
+			//TODO 5.2: Access the images node and load the data by calling the correct function.
+			//Do the same with music and sound fx.
+			//Load Images
+			for (temp = elements_node.child("IMAGES").child("image"); temp != NULL; temp = temp.next_sibling("image"))
+			{
+				temp_cutscene->LoadImg(temp);
 			}
 
 			//Load Music
@@ -98,6 +114,8 @@ bool j1CutSceneManager::LoadCutscene(uint id)
 
 			// LOAD STEPS ---------------------------------
 			steps_node = cutscene_node.child("steps");
+
+			//TODO 6.2: Access the first step node and iterate it in order to load all of them by calling the correct function.
 			for (temp = steps_node.child("step"); temp != NULL; temp = temp.next_sibling("step"))
 			{
 				temp_cutscene->LoadStep(temp, temp_cutscene);
@@ -106,6 +124,7 @@ bool j1CutSceneManager::LoadCutscene(uint id)
 
 			//Set the active_scene pointer to the current scene -------------------------
 			active_cutscene = temp_cutscene;
+
 			LOG("Cutscene '%s' loaded", temp_cutscene->name.c_str());
 			break;
 
@@ -169,20 +188,23 @@ bool j1CutSceneManager::FinishCutscene()
 		{
 			LOG("%s cutscene deactivated", active_cutscene->name.c_str());
 			
+			//TODO 10: Load the destination map of the cutscene (if it has stored a map_id when accessed to the XML file (map_id > -1)).
+			//Do this by calling the appropiate function of the intro scene.
 			if (active_cutscene->map_id > -1) //Load the assigned map if the cutscene has a map id
 			{
 				App->intro->LoadNewMap(active_cutscene->map_id);
 			}
 
+			//TODO 11: Clear the cutscene and set active_cutsene pointer to nullptr.
 			active_cutscene->ClearScene(); //Clear elements and steps lists
 			active_cutscene = nullptr;
-			ret = true;
 
 			//Return to INGAME state
 			App->scene->ChangeState(INGAME);
+
+			ret = true;
 		}
 	}
-
 	return ret;
 }
 
@@ -305,13 +327,17 @@ bool Cutscene::Update(float dt)
 	{
 		CS_Step* step = *temp;
 
-		//Init the step (only once)
+		//TODO 7: Init the step if its start time has been reached (Use the cutscene timer to check the current time)
+		//This function will be called only one time, so you will ned 3 conditions: 
+		// 1) if the step isn't active
+		// 2) if the step isn't finished.
+		// 3) if the start time has been reached by the cutscene timer
 		if (timer.ReadSec() >= step->GetStartTime() && step->isActive() == false && step->isFinished() == false)
 		{
 			step->StartStep();
 		}
 
-		//Update the state to perform its action
+		//Update the active steps to perform its action
 		if (step->isActive() == true)
 		{
 			step->DoAction(dt);
@@ -495,6 +521,7 @@ bool CS_Step::DoAction(float dt)
 {
 	std::string action_name;
 
+	//TODO 8: In each act_type case, add the correct function that will perform the desired action.
 	//Depending on the action type, a different function will be called
 	switch (act_type)
 	{

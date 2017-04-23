@@ -37,6 +37,7 @@
 
   <cutscenemanager>
     <!--id= 0--> <file file="cutscenes/HelloWorld.xml"/>
+    <!--TODO 1: Write a new cutscene path with the name of IntroCutscene.xml and id = 1-->
     <!--id= 1--> <file file="cutscenes/IntroCutscene.xml"/>
   </cutscenemanager>
   
