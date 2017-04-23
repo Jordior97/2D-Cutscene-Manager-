@@ -9,6 +9,7 @@
 #include "j1Map.h"
 #include "j1Window.h"
 #include "j1Scene.h"
+#include "j1Input.h"
 #include <math.h>
 
 j1Map::j1Map() : j1Module(), map_loaded(false)
@@ -36,11 +37,10 @@ void j1Map::Draw()
 	if(map_loaded == false)
 		return;
 
-
+	//SET NAVIGATION MAP VISIBLE
 	if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		navigation_map = !navigation_map;
-	if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN)
-		navigation_map_2 = !navigation_map_2;
+
 
 	for (uint i = 0; i < data.layers.size(); i++)
 	{
@@ -106,8 +106,6 @@ int j1Map::Checkpositions()
 	return ret;
 }
 
-
-
 int Properties::Get(const char* value, int default_value) const
 {
 	std::list<Property*>::const_iterator item = properties.begin();
@@ -134,12 +132,6 @@ TileSet* j1Map::GetTilesetFromTileId(int id) const
 		set = data.tilesets[i];
 	}
 	return set;
-}
-
-void j1Map::EditCost(int x, int y, int value)
-{
-	MapLayer* meta_layer = data.layers[1];
-	meta_layer->data[y*meta_layer->width + x] = value;
 }
 
 TileDirection j1Map::MovementCost(int x, int y, int width, int height, Direction dir) const
@@ -278,7 +270,6 @@ int j1Map::CheckTileCost(int x, int y)
 	}
 
 	return ret;
-	
 }
 
 
@@ -463,83 +454,10 @@ bool j1Map::Load(const char* file_name, uint id_map)
 		directMap.push_back(dir_map);
 	}
 
-	//Create all DynObjects from Tiled
-	if (id_map > 0)
-	{
-		DynObjectFromTiled(id_map);
-	}
-
 
 	map_loaded = ret;
 
 	return ret;
-}
-
-void j1Map::DynObjectFromTiled(uint id_map)
-{
-	int blue = data.tilesets[1]->firstgid + 8;
-	int green = data.tilesets[1]->firstgid;
-	int orange = data.tilesets[1]->firstgid + 6;
-	int purple = data.tilesets[1]->firstgid + 7;
-
-	MapLayer* temp = data.layers[1];
-
-	for (int y = 0; y < data.height; ++y)
-	{
-		for (int x = 0; x < data.width; ++x)
-		{
-			int tile_id = temp->Get(x, y);
-			iPoint positionObject = MapToWorld(x, y);
-			if (tile_id >= data.tilesets[1]->firstgid + 2 && tile_id <= data.tilesets[1]->firstgid + 5 ||
-				tile_id >= data.tilesets[1]->firstgid + 10 && tile_id <= data.tilesets[1]->firstgid + 15)
-			{
-				if ((id_map == 4 && App->scene->player->hook != nullptr && tile_id == data.tilesets[1]->firstgid + 10) ||
-					(id_map == 5 && App->scene->player->bombmanager != nullptr && tile_id == data.tilesets[1]->firstgid + 10))
-				{
-					//DON'T CREATE AGAIN THE BIG CHEST-> REMODELATE THIS METHOD!!!!
-				}
-				else
-				{
-					if (tile_id >= data.tilesets[1]->firstgid + 10)
-					{
-						App->scene->dynobjects.push_back(App->entity_elements->CreateDynObject(iPoint(positionObject.x, positionObject.y), tile_id - data.tilesets[1]->firstgid - 5, id_map));
-						if (tile_id - data.tilesets[1]->firstgid - 5 == 7)
-						{
-							EditCost(x, y, 0);
-						}
-						else
-							EditCost(x, y, data.tilesets[1]->firstgid + 1);
-					}
-					else
-					{
-						App->scene->dynobjects.push_back(App->entity_elements->CreateDynObject(iPoint(positionObject.x, positionObject.y), tile_id - data.tilesets[1]->firstgid - 1, id_map));
-						EditCost(x, y, data.tilesets[1]->firstgid + 1);
-					}
-				}
-
-			}
-			if (tile_id == blue)
-			{
-				blue = -1;
-				doors.push_back(App->collision->AddCollider(SDL_Rect{ positionObject.x, positionObject.y, 15, 15 }, COLLIDER_SWITCH_MAP));
-			}
-			if (tile_id == green)
-			{
-				green = -1;
-				doors.push_back(App->collision->AddCollider(SDL_Rect{ positionObject.x, positionObject.y, 15, 15 }, COLLIDER_SWITCH_MAP));
-			}
-			if (tile_id == purple)
-			{
-				purple = -1;
-				doors.push_back(App->collision->AddCollider(SDL_Rect{ positionObject.x, positionObject.y, 15, 15 }, COLLIDER_SWITCH_MAP));
-			}
-			if (tile_id == orange)
-			{
-				orange = -1;
-				doors.push_back(App->collision->AddCollider(SDL_Rect{ positionObject.x, positionObject.y, 15, 15 }, COLLIDER_SWITCH_MAP));
-			}
-		}
-	}
 }
 
 // Load map general properties
@@ -727,8 +645,6 @@ bool j1Map::LoadProperties(pugi::xml_node& node, Properties& properties)
 bool j1Map::CreateWalkabilityMap(int& width, int& height, uchar** buffer) const
 {
 	bool ret = false;
-	//p2List_item<MapLayer*>* item;
-
 
 	for (uint i = 0; i < data.layers.size(); i++)
 	{
@@ -751,11 +667,6 @@ bool j1Map::CreateWalkabilityMap(int& width, int& height, uchar** buffer) const
 				if(tileset != NULL)
 				{
 					map[i] = (tile_id - tileset->firstgid) > 0 ? 0 : 1;
-					/*TileType* ts = tileset->GetTileType(tile_id);
-					if(ts != NULL)
-					{
-						map[i] = ts->properties.Get("walkable", 1);
-					}*/
 				}
 			}
 		}

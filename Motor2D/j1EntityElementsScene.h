@@ -43,41 +43,23 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	bool DelteWeapons();
-	// delete elements witout player
-	bool DelteElements();
-
-	//Create Functions
+	//CREATION FUNCTIONS --------------------------
 	Soldier* CreateSoldier(uint id, pugi::xml_node& );
-	Item* CreateItem(uint id, iPoint position);
-	//Hookshot* CreateHookshot();
-	DynamicObjects* CreateDynObject(iPoint pos, uint id, uint id_map);
 	Player* CreatePlayer();
-	//BombContainer* CreateBombContainer();
-	//Pokemon* CreatePokemon(pugi::xml_node&, uint id, iPoint pos = (iPoint(0,0)));
-	//PokeTrainer* CreateTrainer(pugi::xml_node&, uint id);
+	// -----------------------------------------
 
-	//Delete Functions
+	//DELETION FUNCTIONS ----------------------------
 	bool DeleteEnemy(Soldier* enemy);
-	bool DeleteDynObject(DynamicObjects* dynobject);
-	bool DeleteItem(Item* enemy);
-	//bool DeletePokemon(Pokemon* enemy);
-	//bool DeleteTrainer(PokeTrainer* trainer);
+	bool DelteElements();
+	//-----------------------------------
 
 	pugi::xml_node conf;
 	pugi::xml_document XML;
 
-	//texture dynobjects
-	SDL_Texture* texture_dynobjects = nullptr;
-	std::string file_tex_dynobjects;
-	//texture Brendan
-	SDL_Texture* texture_trainer = nullptr;
-	std::string file_tex_trainer;
 
 private:
 	std::list<SceneElement*> elementscene;
 	pugi::xml_node LoadConfig(pugi::xml_document& config_file) const; 
-	//Delete
 	
 };
 

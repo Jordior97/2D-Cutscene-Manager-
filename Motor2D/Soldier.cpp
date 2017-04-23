@@ -5,7 +5,6 @@
 #include "p2Defs.h"
 #include "j1Scene.h"
 #include "j1Input.h"
-#include "j1Item.h"
 #include "j1Collision.h"
 #include "j1EntityElementsScene.h"
 #include "j1Audio.h"
@@ -33,8 +32,6 @@ bool Soldier::Awake(pugi::xml_node &conf, uint id)
 			position.y = conf.attribute("pos_y").as_int(0);
 			std::string temp = conf.attribute("file").as_string("");
 
-			item_id = conf.attribute("item_id").as_int(0);
-
 			temp = conf.attribute("dir").as_string("");
 			if (temp == "up")
 				direction = UP;
@@ -61,7 +58,6 @@ bool Soldier::Awake(pugi::xml_node &conf, uint id)
 			stop_search = true;
 		}
 	}
-
 	return true;
 }
 
@@ -87,7 +83,6 @@ void Soldier::OnCollision(Collider* c1, Collider* c2)
 			}
 		}
 	}
-
 }
 
 bool Soldier::Start()
@@ -99,10 +94,6 @@ bool Soldier::Start()
 		state = S_IDLE;
 		anim_state = S_IDLE;
 		speed = 40;
-		timetoplay = SDL_GetTicks();
-		reset_distance = false;
-		reset_run = true;
-
 		radar = 75;
 		chase_speed = 60;
 	}
@@ -112,10 +103,12 @@ bool Soldier::Start()
 		offset_x = 8;
 		offset_y = 15;
 	}
-	collision_feet = App->collision->AddCollider({ position.x - offset_x, position.y - offset_y, 16, 15 }, COLLIDER_ENEMY, this);
 
 	//Get the animations
 	animation = *App->anim_manager->GetAnimStruct(SOLDIER);
+
+	//Set the collision
+	collision_feet = App->collision->AddCollider({ position.x - offset_x, position.y - offset_y, 16, 15 }, COLLIDER_ENEMY, this);
 	return true;
 }
 
@@ -130,13 +123,11 @@ bool Soldier::Update(float dt)
 				{
 				case S_IDLE:
 				{
-					//CheckPlayerPos();
 					Idle();
 					break;
 				}
 				case S_WALKING:
 				{
-					//CheckPlayerPos();
 					Walking(dt);
 					break;
 				}
@@ -145,52 +136,20 @@ bool Soldier::Update(float dt)
 					Die();
 					break;
 				}
-				case S_HIT:
-				{
-					Movebyhit(dt);
-					break;
-				}
-				/*case S_CHASING:
-				{
-					CheckPlayerPos();
-					Chase(dt);
-					break;
-				}
-				case S_ATTACKING:
-				{
-					Attack();
-					break;
-				}*/
 				default:
 				{
 					break;
 				}
-				}
-			
-
+				}	
 		}
 
 		collision_feet->SetPos(position.x - offset_x, position.y - offset_y);
-
 	}
-	else if (App->scene->gamestate == INMENU)
-	{
-
-	}
-	/*else if (App->scene->gamestate == TIMETOPLAY)
-	{
-		if (SDL_GetTicks() - timetoplay > 1000)
-		{
-			App->scene->gamestate = INGAME;
-		}
-	}*/
-
 	return true;
 }
 
 void Soldier::Draw()
 {
-		//App->anim_manager->Drawing_Manager(state, direction, position, 6);
 		if (soldier_type == PASSIVE)
 		{
 			id = 2;
@@ -243,23 +202,6 @@ void Soldier::Draw()
 	
 }
 
-/*bool Soldier::CheckPlayerPos()
-{
-	int distance_player = App->scene->player->position.DistanceTo(position);
-
-	if (distance_player <= radar && App->scene->player->invincible_timer.ReadSec() >= 1)
-	{
-		state = S_CHASING;
-		anim_state = S_WALKING;
-	}
-	else
-	{
-		state = S_IDLE;
-		anim_state = S_IDLE;
-	}
-
-	return true;
-}*/
 
 bool Soldier::Idle()
 {
@@ -319,13 +261,11 @@ bool Soldier::Walking(float dt)
 		reset_run = true;
 	}
 
-
 	if (walking == false)
 	{
 		state = S_IDLE;
 		anim_state = S_IDLE;
 	}
-
 	else
 	{
 		state = S_WALKING;
@@ -339,7 +279,6 @@ bool Soldier::Move(float dt)
 {
 	if (direction == LEFT)
 	{
-		//App->map->MovementCost(position.x - speed, position.y, LEFT)
 		if (App->map->MovementCost(collision_feet->rect.x - ceil(speed*dt), collision_feet->rect.y, collision_feet->rect.w, collision_feet->rect.h, LEFT) == 0)
 		{
 			position.x -= ceil(speed*dt);
@@ -347,7 +286,6 @@ bool Soldier::Move(float dt)
 		}
 		else
 		{
-			//Function to change direction
 			dis_moved++;
 		}
 		walking = true; 
@@ -355,7 +293,6 @@ bool Soldier::Move(float dt)
 
 	if (direction == RIGHT)
 	{
-		//App->map->MovementCost(position.x + (speed + width), position.y, RIGHT)
 		if (App->map->MovementCost(collision_feet->rect.x + collision_feet->rect.w + ceil(speed*dt), collision_feet->rect.y, collision_feet->rect.w, collision_feet->rect.h, RIGHT) == 0)
 		{
 			position.x += ceil(speed*dt);
@@ -369,7 +306,6 @@ bool Soldier::Move(float dt)
 	}
 	if (direction == UP)
 	{
-		//App->map->MovementCost(position.x, position.y - speed, UP)
 		if (App->map->MovementCost(collision_feet->rect.x, collision_feet->rect.y - ceil(speed*dt), collision_feet->rect.w, collision_feet->rect.h, UP) == 0)
 		{
 			position.y -= ceil(speed*dt);
@@ -383,7 +319,6 @@ bool Soldier::Move(float dt)
 	}
 	if (direction == DOWN)
 	{
-		//App->map->MovementCost(position.x, position.y + (speed + height), DOWN)
 		if (App->map->MovementCost(collision_feet->rect.x, collision_feet->rect.y + collision_feet->rect.h + ceil(speed*dt), collision_feet->rect.w, collision_feet->rect.h, DOWN) == 0)
 		{
 			position.y += ceil(speed*dt);
@@ -399,81 +334,8 @@ bool Soldier::Move(float dt)
 	return true;
 }
 
-/*bool Soldier::Chase(float dt)
-{
-	//path.clear();
-	//attack_time.Start();
-
-	if (App->scene->player->GetState() != L_HIT)
-	{
-		iPoint player_pos = App->map->WorldToMap(App->scene->player->position.x, App->scene->player->position.y);
-		GoTo(player_pos, ceil(chase_speed*dt));
-		Orientate();
-	}
-	return true;
-}*/
-
-/*bool Soldier::Attack()
-{
-
-	return true;
-}*/
-
 bool Soldier::Die()
 {
-	App->audio->PlayFx(11);
-	if (item_id != 0)
-	{
-		App->scene->items.push_front(App->entity_elements->CreateItem(item_id, position));
-	}
 	App->entity_elements->DeleteEnemy(this);
 	return true;
 }
-
-bool Soldier::Movebyhit(float dt)
-{
-	if (hp <= 0)
-	{
-		state = S_DYING;
-		anim_state = S_IDLE;
-		return true;
-	}
-
-	if (knockback_time.ReadSec() >= 0.2)
-	{
-		state = S_CHASING;
-		anim_state = S_WALKING;
-		return true;
-	}
-
-	if (dir_hit == UP)
-	{
-		if (App->map->MovementCost(collision_feet->rect.x, collision_feet->rect.y - 4, collision_feet->rect.w, collision_feet->rect.h, UP) == 0)
-		{
-			position.y -= 4;
-		}
-	}
-	else if (dir_hit == DOWN)
-	{
-		if (App->map->MovementCost(collision_feet->rect.x, collision_feet->rect.y + collision_feet->rect.h + 4, collision_feet->rect.w, collision_feet->rect.h, DOWN) == 0)
-		{
-			position.y += 4;
-		}
-	}
-	else if (dir_hit == LEFT)
-	{
-		if (App->map->MovementCost(collision_feet->rect.x - 4, collision_feet->rect.y, collision_feet->rect.w, collision_feet->rect.h, LEFT) == 0)
-		{
-			position.x -= 4;
-		}
-	}
-	else if (dir_hit == RIGHT)
-	{
-		if (App->map->MovementCost(collision_feet->rect.x + collision_feet->rect.w + 4, collision_feet->rect.y, collision_feet->rect.w, collision_feet->rect.h, RIGHT) == 0)
-		{
-			position.x += 4;
-		}
-	}
-	return true;
-}
-

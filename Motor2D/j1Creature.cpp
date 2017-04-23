@@ -3,6 +3,7 @@
 #include "j1App.h"
 #include "j1Scene.h"
 #include "j1Player.h"
+#include "j1Timer.h"
 
 bool Creature::Move(int x, int y)
 {

@@ -14,10 +14,8 @@ class Image;
 class Text;
 class Button;
 class Dialogue;
-class ZeldaMenu;
-//class PokemonCombatHud;
-//class Pokemon;
 class Selector;
+class ZeldaMenu;
 
 // ---------------------------------------------------
 class j1Gui : public j1Module
@@ -58,17 +56,14 @@ public:
 
 	ZeldaMenu* CreateZeldaMenu();
 
-	//PokemonCombatHud* CreatePokemonCombatHud(Pokemon* Link, Pokemon* Brendan);
-
 	void Erase(int id);
-
 	int GetEntitiesSize();
+
 public:
 	int Next_id = 0;
 
 private:
 	std::string atlas_file_name;
-	//p2DynArray<j1GuiEntity*> entities;
 	std::vector<j1GuiEntity*> entities;
 
 protected:

@@ -7,10 +7,7 @@
 #include "p2Point.h"
 #include "j1AnimationManager.h"
 #include "j1Textures.h"
-#include "j1InputManager.h"
 #include "SDL/include/SDL_rect.h"
-
-class Item;
 
 enum ElementType{ CREATURE, ITEM, DYNOBJECT, WEAPON };
 enum Direction { UP, DOWN, LEFT, RIGHT };
@@ -49,8 +46,6 @@ public:
 	{
 		return true;
 	};
-
-	virtual void AddItem(Item* item) {};
 
 	virtual bool Save() { return false; };
 

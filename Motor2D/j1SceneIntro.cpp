@@ -2,7 +2,6 @@
 #include "p2Log.h"
 #include "j1App.h"
 #include "j1Input.h"
-#include "j1InputManager.h"
 #include "j1Textures.h"
 #include "j1Audio.h"
 #include "j1Render.h"
@@ -16,7 +15,6 @@
 #include "j1SceneIntro.h"
 #include "Soldier.h"
 #include "j1Player.h"
-#include "j1DynamicObjects.h"
 #include "j1FileSystem.h"
 #include "j1Collision.h"
 #include "CutsceneManager.h"
@@ -91,14 +89,12 @@ bool j1SceneIntro::PostUpdate()
 	{
 		if (menu)
 		{
-			if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN || App->input_manager->EventPressed(INPUTEVENT::MDOWN) == EVENTSTATE::E_REPEAT)
+			if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
 			{
-				//App->audio->PlayFx(Menu_Cursor);
 				main_menu->Select(1);
 			}
-			if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN || App->input_manager->EventPressed(INPUTEVENT::MUP) == EVENTSTATE::E_REPEAT)
+			if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
 			{
-				//App->audio->PlayFx(Menu_Cursor);
 				main_menu->Select(-1);
 			}
 		}
@@ -153,61 +149,6 @@ void j1SceneIntro::LoadMainMenu()
 	menu_button->anim->speed = 0.25f;
 	menu_button->resize = false;
 	main_menu->AddElement(menu_button);
-}
-
-void j1SceneIntro::OnInputCallback(INPUTEVENT action, EVENTSTATE state)
-{
-	if (App->scene->ingame == false)
-	{
-		switch (action)
-		{
-		case MUP:
-			if (menu == true)
-			{
-				if (state == E_DOWN)
-				{
-					//App->audio->PlayFx(Menu_Cursor);
-					main_menu->Select(-1);
-				}
-
-			}
-			break;
-
-		case MDOWN:
-			if (menu == true)
-			{
-				if (state == E_DOWN)
-				{
-					//App->audio->PlayFx(Menu_Cursor);
-					main_menu->Select(1);
-				}
-			}
-			break;
-
-		case BUTTON_START:
-			if (state == E_DOWN)
-			{
-				if (menu == false)
-				{
-					menu = true;
-					bg_anim = 0;
-					TitleScreen_letters = App->tex->Load("gui/title_screen/letters_menu.png");
-					LoadMainMenu();
-				}
-			}
-			break;
-
-		case BUTTON_A:
-			if (menu == true)
-			{
-				if (main_menu->id_selected == 1)
-				{
-					goHouse = true;
-				}
-			}
-			break;
-		}
-	}
 }
 
 void j1SceneIntro::LoadHouseMap()

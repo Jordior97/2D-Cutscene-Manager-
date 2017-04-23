@@ -3,7 +3,6 @@
 
 #include "j1Module.h"
 #include "j1EntityElementsScene.h"
-#include "j1InputManager.h"
 
 struct SDL_Texture;
 
@@ -19,7 +18,7 @@ class Soldier;
 class DynamicObjects;
 class InputListener;
 
-class j1SceneIntro : public j1Module, public InputListener
+class j1SceneIntro : public j1Module
 {
 public:
 
@@ -47,8 +46,6 @@ public:
 	bool CleanUp();
 
 	void LoadMainMenu();
-
-	void OnInputCallback(INPUTEVENT, EVENTSTATE);
 
 	void LoadHouseMap();
 

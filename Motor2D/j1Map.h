@@ -2,7 +2,6 @@
 #define __j1MAP_H__
 
 #include "PugiXml/src/pugixml.hpp"
-//#include "p2List.h"
 #include <list>
 #include "p2Point.h"
 #include "j1Module.h"
@@ -138,9 +137,6 @@ public:
 	
 	TileDirection MovementCost(int x, int y, int oX, int oY, Direction dir) const;
 	int CheckTileCost(int x, int y);
-
-	void EditCost(int x, int y,int value);
-	void DynObjectFromTiled(uint id);
 
 private:
 

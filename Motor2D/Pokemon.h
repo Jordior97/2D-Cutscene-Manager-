@@ -78,8 +78,7 @@ public:
 	Collider* collision_attack = nullptr;
 
 protected:
-	//Item* drop;
-	Item* item_inside= nullptr;
+
 
 	PokemonState state = P_IDLE;
 	PokemonState anim_state = P_IDLE;

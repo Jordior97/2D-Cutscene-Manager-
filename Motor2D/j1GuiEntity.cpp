@@ -8,11 +8,12 @@
 #include "j1Gui.h"
 #include "j1GuiEntity.h"
 
-j1GuiEntity::j1GuiEntity() {
+j1GuiEntity::j1GuiEntity() 
+{
 	vector_pos = App->gui->GetEntitiesSize() - 1;
 }
-j1GuiEntity::j1GuiEntity(SDL_Rect rectangle, iPoint position, std::string identifier, uint id, bool resize) : Hitbox(rectangle), position(position), identifier(identifier), id(id), resize(resize) {
-	//id = Next_id++;
+j1GuiEntity::j1GuiEntity(SDL_Rect rectangle, iPoint position, std::string identifier, uint id, bool resize) : Hitbox(rectangle), position(position), identifier(identifier), id(id), resize(resize) 
+{
 	vector_pos = App->gui->GetEntitiesSize() - 1;
 }
 
@@ -24,32 +25,15 @@ void j1GuiEntity::CalculateDiferential()
 	diferential.y = (position.y - parent->position.y);
 }
 
-void j1GuiEntity::Update() {
+void j1GuiEntity::Update() {}
 
+void j1GuiEntity::Draw() {}
 
+void j1GuiEntity::Handle_Input() {}
 
-}
+void j1GuiEntity::AssignNumber(uint n) {}
 
-void j1GuiEntity::Draw() {
-
-
-
-}
-
-void j1GuiEntity::Handle_Input() {
-
-
-
-}
-
-void j1GuiEntity::AssignNumber(uint n) {
-
-
-
-}
-
-j1GuiEntity::~j1GuiEntity() {
+j1GuiEntity::~j1GuiEntity() {}
 	
-}
 
 // class GuiEntity ---------------------------------------------------

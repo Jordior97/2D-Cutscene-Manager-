@@ -2,7 +2,6 @@
 #define __j1GUIELEMENTS_H__
 
 #include "j1Module.h"
-#include "j1InputManager.h"
 #include "j1GuiEntity.h"
 
 enum ButtonState{normal, over, clicked};
@@ -87,7 +86,6 @@ public:
 	void Draw();
 	void Update();
 	void PushLine(bool push);
-	//void Clear(int more_erased);
 public:
 	float diferential = 0.5;
 	Text* lines = nullptr;
@@ -107,12 +105,12 @@ public:
 private:
 	Text* first = nullptr, *second = nullptr;
 	Text* selector = nullptr;
-	bool position=true;//true up false down
+	bool position = true; //true up false down
 };
 
 // ------------------------------------------------------
 
-class ZeldaMenu :public j1GuiEntity, public InputListener
+class ZeldaMenu :public j1GuiEntity
 {
 public:
 	ZeldaMenu();
@@ -120,8 +118,7 @@ public:
 public:
 	void Update();
 	void Handle_Input();
-	void OnInputCallback(INPUTEVENT, EVENTSTATE);
-public:
+
 	void AddElement(j1GuiEntity* element);
 	void ResetInventory();
 	void Select(int value);
@@ -129,55 +126,17 @@ public:
 	void Move(bool axis, float speed);
 	void Click();
 	void UnClick();
-	void Do();
 
 	Image* GetImage(uint id);
 	Button* GetSelected();
-	void ShowItemInfo();
+
 private:
 	std::vector<Button*>menu_buttons;
 	std::vector<Image*>menu_images;
 	std::vector<Text*>menu_texts;
-	Button*selected=nullptr;
+	Button* selected = nullptr;
 public:
-	uint id_selected=0;
+	uint id_selected = 0;
 };
 
-//----------------------------------------------------------
-class Pokemon;
-
-class PokemonCombatHud :public j1GuiEntity
-{
-public:
-	PokemonCombatHud(Pokemon* Link, Pokemon* Brendan);
-	~PokemonCombatHud();
-public:
-	void Handle_Input();
-	void Update();
-public:
-	void SetCd(uint newcd);
-	void OpenClose(bool open);//true open false close
-	void Move(bool x_axis, float speed);
-	void LoadNewPokemon(Pokemon* pokemon, bool trainer);
-	void CombatInfo(Pokemon* pokemon_1, Pokemon* pokemon_2);
-	void GetDamage(uint damage, bool trainer);
-public:
-	bool cooldown=false;
-	iPoint cdtime = { 0,0 }; //.X SHOWS CD TIME AND .Y SHOWS REMAINING CD TIME
-
-private:
-	std::vector<Image*>hud_images;
-
-	Image* ability = nullptr;
-	Image* hp1 = nullptr;
-	Image* hp2 = nullptr;
-	Text* poke_hp_Link = nullptr;
-	Text* poke_hp_Brendan = nullptr;
-
-	iPoint hpbar_pLink = { 0,0 };//.X SHOWS MAX HP, .Y SHOWS ACTUAL LIFE (SAME AS ABOVE) used for triangle operations with atlas pixels
-	iPoint hpbar_pBrendan = { 0,0 };
-	char buffer[25]; //hp
-	iPoint num_pokemons = { 0,0 };
-
-};
 #endif // __j1GUIELEMENTS_H__

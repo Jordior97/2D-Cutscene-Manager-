@@ -79,17 +79,12 @@
   <ItemGroup>
     <ClCompile Include="Bezier.cpp" />
     <ClCompile Include="CutsceneManager.cpp" />
-    <ClCompile Include="Functions.cpp" />
     <ClCompile Include="j1Collision.cpp" />
     <ClCompile Include="j1Creature.cpp" />
-    <ClCompile Include="j1DynamicObjects.cpp" />
     <ClCompile Include="j1FadeToBlack.cpp" />
-    <ClCompile Include="j1InputManager.cpp" />
     <ClCompile Include="j1SceneIntro.cpp" />
-    <ClCompile Include="j1Weapon.cpp" />
     <ClCompile Include="SceneElements.cpp" />
     <ClCompile Include="Soldier.cpp" />
-    <ClCompile Include="j1Item.cpp" />
     <ClCompile Include="j1AnimationManager.cpp" />
     <ClCompile Include="j1EntityElementsScene.cpp" />
     <ClCompile Include="j1FileSystem.cpp" />
@@ -121,10 +116,6 @@
     <ClInclude Include="j1SceneIntro.h" />
     <ClInclude Include="j1Collision.h" />
     <ClInclude Include="j1Creature.h" />
-    <ClInclude Include="j1DynamicObjects.h" />
-    <ClInclude Include="j1InputManager.h" />
-    <ClInclude Include="j1Item.h" />
-    <ClInclude Include="j1Weapon.h" />
     <ClInclude Include="MemLeaks.h" />
     <ClInclude Include="Soldier.h" />
     <ClInclude Include="j1AnimationManager.h" />

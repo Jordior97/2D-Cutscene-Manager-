@@ -75,54 +75,9 @@ PathNode * j1PathFinding::GetPathNode(int x, int y)
 	return &map_node[(y*width) + x];
 }
 
-// To request all tiles involved in the last generated path 
-
-
-// PathList ------------------------------------------------------------------------
-// Looks for a node in this list and returns it's list node or NULL
-// ---------------------------------------------------------------------------------
-/*std::list<PathNode>::iterator PathList::Find(const iPoint& point) 
-{
-	std::list<PathNode>::iterator item = list.begin();
-	while(item != list.cend())
-	{
-		if(item._Ptr->_Myval.pos == point)
-			return item;
-		item++;
-	}
-	item=list.end();
-	return item;
-}*/
-
-// PathList ------------------------------------------------------------------------
-// Returns the Pathnode with lowest score in this list or NULL if empty
-// ---------------------------------------------------------------------------------
-/*std::list<PathNode>::const_iterator PathList::GetNodeLowestScore() const
-{
-	//p2List_item<PathNode>* ret = NULL;
-	const_iterator?? something wrong...
-	std::list<PathNode>::const_iterator ret;
-	int min = 65535;
-
-	//p2List_item<PathNode>* item = list.end;
-	std::list<PathNode>::const_iterator item = list.end();
-	item--;
-	while(item != list.begin())
-	{
-		if(item._Ptr->_Myval.Score() < min)
-		{
-			min = item._Ptr->_Myval.Score();
-			ret = item;
-		}
-		item++;
-	}
-	return ret;
-}*/
-
 // PathNode -------------------------------------------------------------------------
 // Convenient constructors
 // ----------------------------------------------------------------------------------
-//PathNode::PathNode() : g(-1), h(-1), pos(-1, -1), parent(NULL){}
 
 PathNode::PathNode(int g, int h, const iPoint& pos, PathNode* parent) : g(g), h(h), pos(pos), parent(parent){}
 
@@ -188,71 +143,6 @@ uint PathNode::FindWalkableAdjacents(PathList& list_to_fill) const
 
 	return list_to_fill.list.size();
 }
-
-/*uint PathNode::FindWalkableAdjacents_D(PathList& list_to_fill) const
-{
-	iPoint cell;
-	uint before = list_to_fill.list.size();
-
-	// north
-	cell.create(pos.x, pos.y + 1);
-	iPoint north = cell;
-	if (App->pathfinding->IsWalkable(cell))
-		list_to_fill.list.push_back(PathNode(-1, -1, cell, this));
-
-	// south
-	cell.create(pos.x, pos.y - 1);
-	iPoint south = cell;
-	if (App->pathfinding->IsWalkable(cell))
-		list_to_fill.list.push_back(PathNode(-1, -1, cell, this));
-
-	// east
-	cell.create(pos.x - 1, pos.y);
-	iPoint east = cell;
-	if (App->pathfinding->IsWalkable(cell))
-		list_to_fill.list.push_back(PathNode(-1, -1, cell, this));
-
-	// west
-	cell.create(pos.x + 1, pos.y);
-	iPoint west = cell;
-	if (App->pathfinding->IsWalkable(cell))
-		list_to_fill.list.push_back(PathNode(-1, -1, cell, this));
-
-	// north - west
-	cell.create(pos.x + 1, pos.y + 1);
-	if (App->pathfinding->IsWalkable(cell))
-	{
-		if (App->pathfinding->IsWalkable(north) == true && App->pathfinding->IsWalkable(west) == true)
-			list_to_fill.list.push_back(PathNode(-1, -1, cell, this));
-	}
-
-	// north-east
-	cell.create(pos.x - 1, pos.y + 1);
-	if (App->pathfinding->IsWalkable(cell))
-	{
-		if (App->pathfinding->IsWalkable(north) == true && App->pathfinding->IsWalkable(east) == true)
-			list_to_fill.list.push_back(PathNode(-1, -1, cell, this));
-	}
-
-	// south - west
-	cell.create(pos.x + 1, pos.y - 1);
-	if (App->pathfinding->IsWalkable(cell))
-	{
-		if (App->pathfinding->IsWalkable(south) == true && App->pathfinding->IsWalkable(west) == true)
-			list_to_fill.list.push_back(PathNode(-1, -1, cell, this));
-	}
-
-	// south - east
-	cell.create(pos.x - 1, pos.y - 1);
-	if (App->pathfinding->IsWalkable(cell))
-	{
-		if (App->pathfinding->IsWalkable(south) == true && App->pathfinding->IsWalkable(east) == true)
-			list_to_fill.list.push_back(PathNode(-1, -1, cell, this));
-	}
-
-
-	return list_to_fill.list.size();
-}*/
 
 // PathNode -------------------------------------------------------------------------
 // Calculates this tile score

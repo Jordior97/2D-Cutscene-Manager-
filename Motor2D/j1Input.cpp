@@ -3,7 +3,6 @@
 #include "j1App.h"
 #include "j1Input.h"
 #include "j1Window.h"
-#include "j1InputManager.h"
 #include "SDL/include/SDL.h"
 
 #define MAX_KEYS 300
@@ -32,8 +31,6 @@ bool j1Input::Awake(pugi::xml_node& config)
 
 	SDL_Init(SDL_INIT_GAMECONTROLLER);
 
-	//Add mapping from config.xml
-	SDL_GameControllerAddMapping(config.child("controller").attribute("file").as_string(""));
 
 	if (SDL_InitSubSystem(SDL_INIT_EVENTS) < 0)
 	{
@@ -48,24 +45,7 @@ bool j1Input::Awake(pugi::xml_node& config)
 bool j1Input::Start()
 {
 	SDL_StartTextInput();
-	//SDL_StopTextInput();
 
-	/* Open the first available controller. */
-	for (int i = 0; i < SDL_NumJoysticks(); ++i) 
-	{
-		if (SDL_IsGameController(i)) 
-		{
-			controller = SDL_GameControllerOpen(i);
-			if (controller) 
-			{
-				break;
-			}
-			else 
-			{
-				fprintf(stderr, "Could not open gamecontroller %i: %s\n", i, SDL_GetError());
-			}
-		}
-	}
 	return true;
 }
 
@@ -105,19 +85,7 @@ bool j1Input::PreUpdate()
 		if (mouse_buttons[i] == KEY_UP)
 			mouse_buttons[i] = KEY_IDLE;
 	}
-	for (int i = 0; i < NUM_CONTROLLER_BUTTONS; ++i)
-	{
-		if (controller_buttons[i] == KEY_DOWN || controller_buttons[i] == KEY_REPEAT)
-		{
-			controller_buttons[i] = KEY_REPEAT;
-			App->input_manager->InputDetected(i, EVENTSTATE::E_REPEAT);
-		}
-			
-		if (controller_buttons[i] == KEY_UP)
-		{
-			controller_buttons[i] = KEY_IDLE;
-		}
-	}
+	
 
 	while (SDL_PollEvent(&event) != 0)
 	{
@@ -171,31 +139,6 @@ bool j1Input::PreUpdate()
 			mouse_y = event.motion.y / scale;
 			break;
 		}
-
-		case SDL_CONTROLLERBUTTONDOWN:
-			controller_buttons[event.cbutton.button] = KEY_DOWN;
-			App->input_manager->InputDetected(event.cbutton.button, EVENTSTATE::E_DOWN);
-			break;
-
-		case SDL_CONTROLLERBUTTONUP:
-			controller_buttons[event.cbutton.button] = KEY_UP;
-			App->input_manager->InputDetected(event.cbutton.button, EVENTSTATE::E_UP);
-			break;
-
-
-		case SDL_CONTROLLERDEVICEADDED:
-			if (SDL_IsGameController(event.cdevice.which))
-			{
-				controller = SDL_GameControllerOpen(event.cdevice.which);
-			}
-			break;
-
-		case SDL_CONTROLLERDEVICEREMOVED:
-			if (controller)
-			{
-				SDL_GameControllerClose(controller);
-			}
-			break;
 		}
 	}
 	return true;

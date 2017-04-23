@@ -16,8 +16,6 @@
 #include "j1Map.h"
 #include "j1Pathfinding.h"
 #include "j1EntityElementsScene.h"
-#include "j1InputManager.h"
-#include "CombatManager.h"
 #include "j1AnimationManager.h"
 #include "CutsceneManager.h"
 #include "j1Fonts.h"
@@ -47,14 +45,12 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	anim_manager = new j1AnimationManager();
 	cs_manager = new j1CutSceneManager();
 	collision = new j1Collision();
-	input_manager = new InputManager();
 	fadetoblack = new j1FadeToBlack();
 
 	// Ordered for awake / Start / Update
 	// Reverse order of CleanUp
 	AddModule(fs);
 	AddModule(input);
-	AddModule(input_manager);
 	AddModule(win);
 	AddModule(tex);
 	AddModule(audio);

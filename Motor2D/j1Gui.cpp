@@ -86,7 +86,6 @@ bool j1Gui::CleanUp()
 	return true;
 }
 
-// const getter for atlas
 const SDL_Texture* j1Gui::GetAtlas() const
 {
 	return atlas;
@@ -155,15 +154,6 @@ ZeldaMenu* j1Gui::CreateZeldaMenu()
 	entities.push_back(element);
 	return element;
 }
-
-/*PokemonCombatHud* j1Gui::CreatePokemonCombatHud(Pokemon* Link, Pokemon* Brendan)
-{
-	PokemonCombatHud* element = new PokemonCombatHud(Link, Brendan);
-	entities.push_back(element);
-	return element;
-}*/
-
-
 
 // class Gui ---------------------------------------------------
 

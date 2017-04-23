@@ -68,15 +68,11 @@ struct PathList;
 struct PathNode
 {
 	// Convenient constructors
-	//PathNode();
 	PathNode(int g, int h, const iPoint& pos, PathNode* parent);
 	PathNode(const PathNode& node);
 
 	// Fills a list (PathList) of all valid adjacent pathnodes
 	uint FindWalkableAdjacents(PathList& list_to_fill) const;
-
-	// Fills a list (PathList) of all valid adjacent pathnodes with all cardinal points
-	uint FindWalkableAdjacents_D(PathList& list_to_fill) const;
 
 	// Calculates this tile score
 	int Score() const;
@@ -109,16 +105,9 @@ struct compare
 struct PathList
 {
 	// Looks for a node in this list and returns it's list node or NULL
-	//p2List_item<PathNode>* Find(const iPoint& point) const;
 	std::list<PathNode>::iterator Find(const iPoint& point);
-
-	// Returns the Pathnode with lowest score in this list or NULL if empty
-	//p2List_item<PathNode>* GetNodeLowestScore() const;
-	std::list<PathNode>::const_iterator GetNodeLowestScore() const;
-	// -----------
 	
 	// The list itself, note they are not pointers!
-	//std::list<PathNode> list;
 	std::priority_queue<PathNode*, std::vector<PathNode*>, compare> list;
 };
 
