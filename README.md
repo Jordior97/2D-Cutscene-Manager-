@@ -14,7 +14,7 @@ It’s a video sequence where the player doesn’t have the control (or it’s l
 -	And more.
 
 These scenes are made by scheduled events, using often game graphics. 
-They can also be animated, real images or previosly rendered images (and transmitted from a video file). 
+They can also be animated, real images or previously rendered images (and transmitted from a video file). 
 These pre-made videos used in video games are called “Full Motion Videos” (FMVs).
 
 ### TYPES OF CUTSCENES
@@ -73,15 +73,12 @@ class j1CutSceneManager : public j1Module
 	bool StartCutscene(uint id); 	//Active a cutscene when an event triggers it
 	bool FinishCutscene(); 	//Deactive the active cutscene
 
-	list<Cutscene*> cutscenes;  //container with all cutscenes
 	list<std::string> paths;  //container with names of all .xml paths of the cutscenes
 	Cutscene* active_cutscene = nullptr;  //To know wich cutscene is reproduced at the moment
 };
 ```
-The Cutscene Manager works as a container that stores all Cutscenes that will be reproduced at a specific moment of the game.
-We load the cutscenes when the game starts by reading from XML files that store all the information needed.
+The Cutscene Manager works as a container that stores all the cutscenes Paths. This paths are used to acces the correct file when a specific cutscene is triggered.
 
-When an event TRIGGERS a cutscene, we iterate the *cutscenes* list to find the correct cutscene and start it.
 
 ### CUTSCENE ANATOMY
 ```cpp
@@ -102,29 +99,75 @@ class Cutscene
 	std::list<CS_Step*> steps; //Steps to follow in order when reproduced
 };
 ```
+CUTSCENES CAN BE DIVIDED INTO 2 NOTABLE PARTS:
 
 **ELEMENTS:** game objects that will be controlled by the cutscene during its reproduction.
 
-In my case, they can be of different types:
+They can be of different types, for example:
  - IMAGES
  - TEXTS
  - MUSICS
  - SOUND FX
  - NPCs
+ - MAPS
+ - ...
  
-These elements store different, variables depending on its type, that the cutscene can modify through a STEP SYSTEM.
+These elements store different variables (depending on its type) that the cutscene can modify through a STEP SYSTEM.
 
 **STEPS:** ordered actions the cutscene will call through its reproduction time. Each step is **linked to an element** of the specific cutscene. It has got also defined a **specified action** that will be applied to the linked object.
 
 Different action types can be defined:
- - ENABLE
- - DISABLE
- - MOVE
- - PLAY
+ - ENABLE -> Activate the element (it will be able to be updated & drawn).
+ - DISABLE -> Deactivate the element (to not be drawn or updated).
+ - MOVE -> change it's coordinates to a specified destination.
+ - PLAY -> reproduce the linked music or sound fx.
+ - ...
+  
+
+### ELEMENT ANATOMY
+```.cpp
+class CS_Element
+{
+	CS_Element(CS_Type type, int n, const char* name, bool active, const char* path);
+	virtual ~CS_Element();
+
+	std::string name;
+	bool active = false;
+	CS_Type type = CS_NONE;	  //Cutscene element type
+	int n = -1;		  //identifier
+	std::string path;	  //auxiliar path (texture file name, animation, sound/music file...)
+};
+```
+This is the base class for a cutscene element. It has a child for every different type of element, so it can store multiple and different variables (TEXTURES for images, GAME ENTITIES for NPC's, STRINGS for texts... and more).
+
+### STEP ANATOMY
+```.cpp
+class CS_Step
+{
+	//STEP FUNCTIONS -------------
+	void SetElement(pugi::xml_node&);
+	void SetAction(pugi::xml_node&);
+	//------------------------------
+
+	//ACTION FUNCTIONS ----------
+	bool DoAction(float dt);  //Perform the correct action according to the action type assigned
+	bool DoMovement(float dt);
+	void Play();
+	void StopMusic();
+	void ActiveElement();
+	void DisableElement();
+	//---------------------------
+
+	Cutscene* cutscene = nullptr;		//Pointer to the cutscene that it is integrated
+	Action_Type act_type= ACT_NONE;		//Type of action that will be executed in this step
+	CS_Element*	element = nullptr;	//LINKED ELEMENT to apply the action
+};
+```
+Steps always are linked to an ELEMENT and ACTION.
  
 ### CUTSCENE XML STRUCTURE
 
-Every cutscene is stored in a different XML file to keep the project organized. The Cutscene Manager contains all the names of these files in a list, so it can access them to create every Cutscene and store its respective data (Elements & Steps). 
+Every cutscene is stored in a different XML file to keep the project organized. The Cutscene Manager contains all the names of these files in a list, so it can access them to load the Cutscene and store its respective data (Elements & Steps).
 
 Let's see an EXAMPLE:
 ```cpp
@@ -134,12 +177,12 @@ Let's see an EXAMPLE:
   <elements>
     <MAP id="1" file="TiledLinkHouse.tmx"/>   
     <NPCs>
-      <npc n="0" name="Link" x="100" y="100" dir="down" state="idle" update="true"/>
-      <npc n="1" name="soldier" x="100" y="120" dir="up" state="idle" update="true"/>
+      <npc n="0" name="Link" x="100" y="100" dir="down" state="idle" active="true"/>
+      <npc n="1" name="soldier" x="100" y="400" dir="up" state="idle" active="true"/>
     </NPCs>
     <TEXTS>
-      <text n="5" name="text1" text="Hello, what are you doing here?" x="100" y="100" update="false"/>
-      <text n="6" name="text2" text="I'm doing pancakes" x="100" y="100" update ="false"/>
+      <text n="5" name="text1" text="Hello, what are you doing here?" x="100" y="100" active="false"/>
+      <text n="6" name="text2" text="I'm doing pancakes" x="100" y="100" active ="false"/>
     </TEXTS>
     <MUSIC>
       <music n="7" name="KakarikoVillage" path="audio/music/ZELDA/Zeldakakariko_village.ogg"/>
@@ -148,22 +191,28 @@ Let's see an EXAMPLE:
 
   <!--EXECUTE ALL ACTIONS IN ORDER-->
   <steps>
-    <step n="0" start="1">
-      <element name="Link" action="move">
-        <movement dest_x ="300" dest_y="300"/>     
+    <step n="0" start="0" duration="0">
+      <element name="KakarikoVillage" action="play"/>
+    </step>
+    <step n="1" start="0" duration="-1">
+      <element name="Link" action="move" dir="down">
+        <movement dest_x ="100" dest_y="380" speed="30"/>     
       </element>
     </step>
-    <step n="1" start="2">
+    <step n="2" start="1" duration="0">
       <element name="text1" action="enable"/>
     </step>
-    <step n="2" start="3">
+    <step n="3" start="4" duration="0">
       <element name="text1" action="disable"/>
     </step>
-    <step n="3" start="3">
+    <step n="4" start="5" duration="0">
       <element name="text2" action="enable"/>
     </step>
-    <step n="4" start="4">
+    <step n="5" start="8" duration="0">
       <element name="text2" action="disable"/>
+    </step>
+    <step n="6" start="10" duration="0">
+      <element name="KakarikoVillage" action="stop"/>
     </step>
   </steps>
   
@@ -171,11 +220,38 @@ Let's see an EXAMPLE:
 ```
 **1) LOAD ALL ELEMENTS INVOLVED IN THE CUTSCENE TO ITS OWN LIST:** each element, depending on its type, will store different type of variables.
 
-**2) LOAD ALL STEPS IN THE CUTSCENE:** each step time variable (*start*) that determines when it starts. Once activated, it will perform the specified action on the linked element. When the action is completed, the step is done and it won't be updated again.
- 
+**2) LOAD ALL STEPS IN THE CUTSCENE:** each step contains a time variable (*start*) that determines when it starts, the element that it's linked to it, and the duration time of the step (*note that movement actions has a duration of -1 because they are finished when the movement is completed*, not when the duration time is reached).
+
+### HOW CAN WE ACCESS TO THE CORRECT XML FILE?
+Well, in the config.xml file we have to write every path of the cutscene in a order, to enable the cutscene manager storing these paths.
+
+```.cpp
+<config>
+ <cutscenemanager>
+    <!--id= 0--> <file file="cutscenes/Cutscene1.xml"/>
+    <!--id= 1--> <file file="cutscenes/Cutscene2.xml"/>
+    <!--id= 2--> <file file="cutscenes/Cutscene3.xml"/>
+  </cutscenemanager>
+ </config>
+```
+So, in the Awake() function, we load every path in the list, IN ORDER: 
+```.cpp
+paths[0] = "cutscenes/Cutscene1.xml"
+paths[1] = "cutscenes/Cutscene2.xml"
+paths[2] = "cutscenes/Cutscene3.xml"
+```
+
+
 ### CUTSCENE REPRODUCTION
 
-When an event triggers a cutscene, the state of the game changes to *CUTSCENE MODE* so the player "loses the control of the game" that will be passed to the Cutscene Manager.
+A Cutscene can be activated through multiple ways:
+- By clicking a button.
+- Killing a monster.
+- Accessing to a specific zone (with the tiled map structure, we can make a tile of the map contain an ID property that activates a specific cutscene when the player is above it).
+- etc.
+
+
+
 
 
 
