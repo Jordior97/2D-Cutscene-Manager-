@@ -241,7 +241,6 @@ paths[1] = "cutscenes/Cutscene2.xml"
 paths[2] = "cutscenes/Cutscene3.xml"
 ```
 
-
 ### CUTSCENE REPRODUCTION
 
 A Cutscene can be activated through multiple ways:
@@ -250,6 +249,23 @@ A Cutscene can be activated through multiple ways:
 - Accessing to a specific zone (with the tiled map structure, we can make a tile of the map contain an ID property that activates a specific cutscene when the player is above it).
 - etc.
 
+## IMPROVING THE SYSTEM
+
+We can extend this Cutscene Manager as much as we want by implementing new ELEMENTS, ACTIONS, EFFECTS...
+Here are few examples to implement:
+- Link Game Entities with the NPC Cutscene Elements to control their STATE (moving, attacking, idle...) and POSITION while a cutscene is being reproduced.
+- Try to take the control of the CAMERA to make it move (implement bezier curves for great results).
+- Cutscenes can also trigger other cutscenes when they finish.
+- Load a specific map of the game while the cutscene is being reproduced.
+
+## RESUMING THIS MANAGEMENT
+![](https://raw.githubusercontent.com/Jordior97/2D-Cutscene-Manager-/master/CutsceneManager.png)
+
+# FURTHER READING & WATCHING
+https://en.wikipedia.org/wiki/Cutscene
+https://www.youtube.com/watch?v=oOhXBcmLq2M
+https://www.reddit.com/r/gamedev/comments/1x3o9o/how_should_i_go_about_adding_unique_events/
+https://www.reddit.com/r/gamedev/comments/1jjxrk/how_do_you_handle_cut_scenes_and_scripting_systems/
 
 
 
