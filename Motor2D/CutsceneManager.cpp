@@ -193,7 +193,18 @@ bool j1CutSceneManager::PostUpdate()
 
 bool j1CutSceneManager::CleanUp()
 {
-	return false;
+	//Iterate thorugh the cutscenes to free all elements and steps
+	for (std::list<Cutscene*>::iterator it = cutscenes.begin(); it != cutscenes.end(); it++)
+	{
+		//CLEAR STEPS & ELEMENTS OF THE CUTSCENE
+		it._Ptr->_Myval->ClearScene();
+		
+		//CLEAR CUTSCENE FROM THE CUTSCENES LIST
+		RELEASE(it._Ptr->_Myval);
+		cutscenes.erase(it);
+	}
+	cutscenes.clear();
+	return true;
 }
 
 bool j1CutSceneManager::CutsceneReproducing() const
@@ -329,6 +340,31 @@ bool Cutscene::DrawElements()
 	}
 	//--------------------------------------------------------------------
 	return false;
+}
+
+bool Cutscene::ClearScene()
+{
+	//CLEAR ELEMENTS
+	for (std::list<CS_Element*>::iterator it = elements.begin(); it != elements.end(); it++)
+	{
+		if (it._Ptr->_Myval->GetType() == CS_MUSIC)
+		{
+
+		}
+		RELEASE(it._Ptr->_Myval);
+		elements.erase(it);
+	}
+	elements.clear();
+
+	//CLEAR STEPS
+	for (std::list<CS_Step*>::iterator it = steps.begin(); it != steps.end(); it++)
+	{
+		RELEASE(it._Ptr->_Myval);
+		steps.erase(it);
+	}
+	steps.clear();
+
+	return true;
 }
 
 bool Cutscene::LoadNPC(pugi::xml_node& node)

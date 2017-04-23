@@ -138,19 +138,7 @@ bool j1Audio::PlayMusic(const char* path, float fade_time)
 bool j1Audio::StopMusic()
 {
 	bool ret = true;
-	if (music != NULL)
-	{
-		Mix_PauseMusic();
-		if (Mix_PausedMusic == 0)
-		{
-			LOG("Music wasn't paused. Mix_GetError(): %s", Mix_GetError());
-			ret = false;
-		}
-		else
-		{
-			LOG("Music Paused");
-		}
-	}
+	Mix_HaltMusic();
 	return ret;
 }
 

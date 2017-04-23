@@ -166,10 +166,11 @@ class Cutscene
 public:
 	Cutscene();
 	~Cutscene();
-	bool Start();
 
+	bool Start();
 	bool Update(float dt);
 	bool DrawElements();
+	bool ClearScene();
 
 	//LOAD ELEMENTS FUNCTIONS -------
 	bool LoadNPC(pugi::xml_node&);
@@ -224,9 +225,6 @@ public:
 	// Called before the first frame
 	bool Start();
 
-	// Called before all Updates
-	//bool PreUpdate();
-
 	// Called each loop iteration
 	bool Update(float dt);
 
@@ -241,7 +239,6 @@ public:
 	bool CleanUp();
 	
 	bool CutsceneReproducing() const;
-	//void Clear();
 
 private:
 
