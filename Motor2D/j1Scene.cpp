@@ -104,15 +104,6 @@ bool j1Scene::Update(float dt)
 			}
 		}
 	}
-
-	if (gamestate == INGAME)
-	{
-		if (App->input->GetKey(SDL_SCANCODE_P) == KEY_DOWN)
-		{
-			App->cs_manager->StartCutscene(0);
-		}
-	}
-
 	return true;
 }
 
