@@ -47,7 +47,7 @@ Rendered using the same game engine as the graphics during the gameplay. It’s 
 - Adaptation to the game state.
 - Player can control the camera movement.
 
-![](http://rs1370.pbsrc.com/albums/ag248/Sente_Black/My%20Gifs/ratchetandclank3dancinggif_zpsfc5006a2.gif~c200)  ![](https://24.media.tumblr.com/c6b077223e18725a014afef59691f71b/tumblr_mmtg15zpf51rlm74no1_400.gif)
+![](https://24.media.tumblr.com/c6b077223e18725a014afef59691f71b/tumblr_mmtg15zpf51rlm74no1_400.gif)
 
 **3) Interactive Cutscenes:**
 
@@ -266,6 +266,13 @@ https://en.wikipedia.org/wiki/Cutscene
 https://www.youtube.com/watch?v=oOhXBcmLq2M
 https://www.reddit.com/r/gamedev/comments/1x3o9o/how_should_i_go_about_adding_unique_events/
 https://www.reddit.com/r/gamedev/comments/1jjxrk/how_do_you_handle_cut_scenes_and_scripting_systems/
+
+# ABOUT ME
+Hello, I'm Jordi Oña, and I'm studying a Videogames Design and Developement Degree in Terrassa, at the CITM centre.
+I hope this project helps you on your journey through the cutscenes world (2D world).
+
+Here is my Github if you want to check my other repositories: https://github.com/Jordior97
+
 
 
 
