@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<levels>
+  <!--LOAD LINK STATS-->
+  <Link>
+    <stats hp="74" attack="10" speed="60" pos_x="100" pos_y="90" />
+  </Link>
+  <maps>
+    <map n="1" file="TiledLinkHouse.tmx">
+      <camera follow="false"/>
+      <Link pos_x="110" pos_y="100" />
+    </map>
+  </maps>
+</levels>
