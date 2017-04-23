@@ -115,7 +115,7 @@ bool Soldier::Start()
 bool Soldier::Update(float dt)
 {
 	// STATE MACHINE ------------------
-		if (App->scene->gamestate == INGAME)
+		if (App->scene->gamestate == INGAME) //IA performing actions only while INGAME state
 		{
 			if (soldier_type == AGGRESSIVE)
 			{

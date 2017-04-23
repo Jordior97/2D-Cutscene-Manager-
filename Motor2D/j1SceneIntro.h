@@ -47,7 +47,7 @@ public:
 
 	void LoadMainMenu();
 
-	void LoadHouseMap();
+	void LoadNewMap(int id);
 
 private:
 	//Start screen

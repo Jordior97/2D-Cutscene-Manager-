@@ -60,7 +60,7 @@ bool j1CutSceneManager::Start()
 		//LOAD ELEMENTS INVOLVED IN THE CUTSCENE --------------------------------------------------------------
 		elements_node = cutscene_node.child("elements");
 
-		//Load Map
+		//Load map to change when cutscene is finished
 		temp_cutscene->SetMap(elements_node);
 
 		//Load NPCs
@@ -150,8 +150,13 @@ bool j1CutSceneManager::StartCutscene(uint id)
 		if (id == it._Ptr->_Myval->GetID())
 		{
 			active_cutscene = *it;
+
+			//Start the correct cutscene
 			active_cutscene->Start();
+
+			//Change the game state
 			App->scene->ChangeState(CUTSCENE);
+
 			LOG("%s cutscene activated", active_cutscene->name.c_str());
 			return true;
 		}
@@ -169,13 +174,15 @@ bool j1CutSceneManager::FinishCutscene()
 		{
 			LOG("%s cutscene deactivated", active_cutscene->name.c_str());
 			
-			if (active_cutscene->map_id == 1)
+			if (active_cutscene->map_id > -1) //Load the map if the cutscene has a map id
 			{
-				App->intro->LoadHouseMap();
+				App->intro->LoadNewMap(active_cutscene->map_id);
 			}
 
 			active_cutscene = nullptr;
 			ret = true;
+
+			//Return to INGAME state
 			App->scene->ChangeState(INGAME);
 		}
 	}
@@ -326,7 +333,7 @@ bool Cutscene::Update(float dt)
 
 bool Cutscene::DrawElements()
 {
-	//UPDATE ELEMENTS ---------------------------------------
+	//DRAW CUTSCENE ELEMENTS ---------------------------------------
 	for (std::list<CS_Element*>::iterator it = elements.begin(); it != elements.end(); it++)
 	{
 		if (it._Ptr->_Myval->GetType() == CS_IMAGE)
@@ -347,10 +354,6 @@ bool Cutscene::ClearScene()
 	//CLEAR ELEMENTS
 	for (std::list<CS_Element*>::iterator it = elements.begin(); it != elements.end(); it++)
 	{
-		if (it._Ptr->_Myval->GetType() == CS_MUSIC)
-		{
-
-		}
 		RELEASE(it._Ptr->_Myval);
 		elements.erase(it);
 	}
@@ -472,7 +475,7 @@ void Cutscene::StepDone()
 
 bool Cutscene::SetMap(pugi::xml_node& node)
 {
-	map_id = node.child("MAP").attribute("id").as_int(-1);
+	map_id = node.child("MAP").attribute("id").as_int(-1); //if it has no MAP id, it's set to -1
 	return false;
 }
 

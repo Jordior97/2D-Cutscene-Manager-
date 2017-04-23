@@ -151,9 +151,18 @@ void j1SceneIntro::LoadMainMenu()
 	main_menu->AddElement(menu_button);
 }
 
-void j1SceneIntro::LoadHouseMap()
+void j1SceneIntro::LoadNewMap(int id)
 {
-	goHouse = true;
+	//Load the correct map accord to the id passed
+	switch (id)
+	{
+	case 1: //ID = 1 -> Set the first map of the game (Link's house)
+		goHouse = true;
+		break;
+	default:
+		break;
+	}
+	
 }
 
 // Called before quitting

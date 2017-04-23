@@ -74,7 +74,7 @@ bool Player::Update(float dt)
 	bool ret = true;
 
 	// STATE MACHINE ------------------
-	if (App->scene->gamestate == INGAME)
+	if (App->scene->gamestate == INGAME) //Only you control the player if it's INGAME state
 	{
 		switch (state)
 		{
