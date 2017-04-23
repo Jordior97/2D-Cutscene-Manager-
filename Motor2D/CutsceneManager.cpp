@@ -89,22 +89,20 @@ bool j1CutSceneManager::LoadCutscene(uint id)
 				temp_cutscene->LoadMusic(temp);
 			}
 
-			//Load Fx
+			//Load Sound Fx
 			for (temp = elements_node.child("FX").child("fx"); temp != NULL; temp = temp.next_sibling("fx"))
 			{
 				temp_cutscene->LoadFx(temp);
 			}
 			// -----------------------------------------------------------------------------------
 
-			// LOAD STEPS --------------
+			// LOAD STEPS ---------------------------------
 			steps_node = cutscene_node.child("steps");
 			for (temp = steps_node.child("step"); temp != NULL; temp = temp.next_sibling("step"))
 			{
 				temp_cutscene->LoadStep(temp, temp_cutscene);
 			}
-
-
-			// ---------------------
+			// -----------------------------------------
 
 			//Set the active_scene pointer to the current scene -------------------------
 			active_cutscene = temp_cutscene;
@@ -124,9 +122,9 @@ bool j1CutSceneManager::Update(float dt)
 
 	if (active_cutscene != nullptr)
 	{
-		if (active_cutscene->isFinished() == false)
+		if (active_cutscene->isFinished() == false) //Update the active cutscene until it's finished
 		{
-			active_cutscene->Update(dt); //Update elements of the cutscene
+			active_cutscene->Update(dt); 
 		}
 		else
 		{
@@ -140,14 +138,14 @@ bool j1CutSceneManager::Update(float dt)
 //Set to active the correct cutscene
 bool j1CutSceneManager::StartCutscene(uint id)
 {
-	LoadCutscene(id);
+	LoadCutscene(id); //Acces to the correct XML and load elements and steps of the cutscene
 
 	if (active_cutscene != nullptr)
 	{
-		//Start the correct cutscene
+		//Start the triggered cutscene
 		active_cutscene->Start();
 
-		//Change the game state
+		//Change the game state (the Cutscene Manager now takes the control of the game)
 		App->scene->ChangeState(CUTSCENE);
 
 		LOG("%s cutscene activated", active_cutscene->name.c_str());
@@ -164,18 +162,19 @@ bool j1CutSceneManager::StartCutscene(uint id)
 bool j1CutSceneManager::FinishCutscene()
 {
 	bool ret = false;
+
 	if (active_cutscene != nullptr)
 	{
 		if (active_cutscene->isFinished() == true)
 		{
 			LOG("%s cutscene deactivated", active_cutscene->name.c_str());
 			
-			if (active_cutscene->map_id > -1) //Load the map if the cutscene has a map id
+			if (active_cutscene->map_id > -1) //Load the assigned map if the cutscene has a map id
 			{
 				App->intro->LoadNewMap(active_cutscene->map_id);
 			}
 
-			active_cutscene->ClearScene();
+			active_cutscene->ClearScene(); //Clear elements and steps lists
 			active_cutscene = nullptr;
 			ret = true;
 
@@ -183,6 +182,7 @@ bool j1CutSceneManager::FinishCutscene()
 			App->scene->ChangeState(INGAME);
 		}
 	}
+
 	return ret;
 }
 
@@ -190,14 +190,14 @@ bool j1CutSceneManager::PostUpdate()
 {
 	if (active_cutscene != nullptr)
 	{
-		active_cutscene->DrawElements();
+		active_cutscene->DrawElements(); //Draw external elements that aren't integrated in the main game  (Images, Texts...)
 	}
 	return true;
 }
 
 bool j1CutSceneManager::CleanUp()
 {
-	//Iterate thorugh the cutscenes to free all elements and steps
+	//Clear the cutscene (if it's being reproduced) 
 	if(active_cutscene != nullptr)
 	{
 		//CLEAR STEPS & ELEMENTS OF THE CUTSCENE
@@ -209,6 +209,7 @@ bool j1CutSceneManager::CleanUp()
 	return true;
 }
 
+//Check if a cutscene is being reproduced
 bool j1CutSceneManager::CutsceneReproducing() const
 {
 	if (active_cutscene != nullptr)
@@ -258,7 +259,7 @@ CS_Element* Cutscene::GetElement(const char* name)
 {
 	CS_Element* temp = nullptr;
 
-	//Iterates elements list of the cutscene to find the correct element
+	//Iterates elements list of the cutscene to find the correct element (this comparison can be done with the element id too)
 	for (std::list<CS_Element*>::iterator it = elements.begin(); it != elements.end(); it++)
 	{
 		if (it._Ptr->_Myval->name == name)
@@ -287,7 +288,7 @@ Cutscene::~Cutscene()
 bool Cutscene::Start()
 {
 	finished = false;
-	timer.Start();
+	timer.Start(); //Starts the timer to reproduce the steps in order.
 	return true;
 }
 
@@ -295,6 +296,7 @@ bool Cutscene::Update(float dt)
 {
 	bool ret = true;
 	bool active = false;
+
 	//Iterate the steps of the cutscene to update the active ones
 	std::list<CS_Step*>::iterator temp = steps.begin();
 	
@@ -329,7 +331,7 @@ bool Cutscene::Update(float dt)
 
 bool Cutscene::DrawElements()
 {
-	//DRAW CUTSCENE ELEMENTS ---------------------------------------
+	//DRAW CUTSCENE EXTERNAL ELEMENTS ---------------------------------------
 	for (std::list<CS_Element*>::iterator it = elements.begin(); it != elements.end(); it++)
 	{
 		if (it._Ptr->_Myval->GetType() == CS_IMAGE)
@@ -372,31 +374,10 @@ bool Cutscene::LoadNPC(pugi::xml_node& node)
 	if (node != NULL)
 	{
 		this->elements.push_back(new CS_Element(CS_NPC, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("active").as_bool(false), nullptr));
+		//App->scene->entities.pushback(new Entity()); //Create a new game entity if it doesn't exist yet.
 		ret = true;
 	}
 	return ret;
-}
-
-bool Cutscene::LoadDynObject(pugi::xml_node& node)
-{
-	bool ret = false;
-	if (node != NULL)
-	{
-		elements.push_back(new CS_Element(CS_DYNOBJECT, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("active").as_bool(false), nullptr));
-		ret = true;
-	}
-	return false;
-}
-
-bool Cutscene::LoadItem(pugi::xml_node& node)
-{
-	bool ret = false;
-	if (node != NULL)
-	{
-		elements.push_back(new CS_Element(CS_ITEM, node.attribute("n").as_int(-1), node.attribute("name").as_string(""), node.attribute("active").as_bool(false), nullptr));
-		ret = true;
-	}
-	return false;
 }
 
 bool Cutscene::LoadImg(pugi::xml_node& node)
@@ -447,14 +428,17 @@ bool Cutscene::LoadFx(pugi::xml_node& node)
 }
 
 
-bool Cutscene::LoadStep(pugi::xml_node& node, Cutscene* cutscene) //Pass the cutscene that it's involved to link
+bool Cutscene::LoadStep(pugi::xml_node& node, Cutscene* cutscene) //Pass the cutscene that it's involved to link the step with it
 {
 	bool ret = false;
 	if (node != NULL && cutscene != nullptr)
 	{
-		CS_Step* temp_step = new CS_Step(node.attribute("n").as_int(-1), node.attribute("start").as_int(-1), node.attribute("duration").as_int(-1), cutscene);
+		CS_Step* temp_step = new CS_Step(node.attribute("n").as_int(-1), node.attribute("start").as_float(-1), node.attribute("duration").as_float(-1), cutscene);
 
+		//Link to the correct element of the cutscene
 		temp_step->SetElement(node);
+
+		//Set the action that will be applied to the linked element
 		temp_step->SetAction(node);
 
 		this->steps.push_back(temp_step);
@@ -469,6 +453,7 @@ void Cutscene::StepDone()
 	steps_done++;
 }
 
+//Assign a map id to load it after the cutscene
 bool Cutscene::SetMap(pugi::xml_node& node)
 {
 	map_id = node.child("MAP").attribute("id").as_int(-1); //if it has no MAP id, it's set to -1
@@ -498,7 +483,7 @@ CS_Type CS_Element::GetType() const
 
 
 //CS STEPS ----------------------------------
-CS_Step::CS_Step(int n, int start, int duration, Cutscene* cutscene):n(n), start(start), duration(duration), cutscene(cutscene)
+CS_Step::CS_Step(int n, float start, float duration, Cutscene* cutscene):n(n), start(start), duration(duration), cutscene(cutscene)
 {
 }
 
@@ -509,6 +494,8 @@ CS_Step::~CS_Step()
 bool CS_Step::DoAction(float dt)
 {
 	std::string action_name;
+
+	//Depending on the action type, a different function will be called
 	switch (act_type)
 	{
 	case ACT_DISABLE:
@@ -564,7 +551,7 @@ void CS_Step::FinishStep()
 {
 	active = false;
 	finished = true;
-	cutscene->StepDone(); 
+	cutscene->StepDone(); //Increment the "steps done" counter
 	LOG("Step %i finished at %.3fs", n, cutscene->timer.ReadSec());
 }
 
@@ -587,6 +574,7 @@ void CS_Step::SetAction(pugi::xml_node& node)
 		iPoint destination = { node.child("element").child("movement").attribute("dest_x").as_int(0), node.child("element").child("movement").attribute("dest_y").as_int(0) };
 		std::string direction_type = node.child("element").attribute("dir").as_string("");
 
+		//Load the movement variables (origin, destination, speed, direction)
 		LoadMovement(destination, node.child("element").child("movement").attribute("speed").as_int(1), direction_type);
 	}
 	else if (action_type == "play")
@@ -633,8 +621,13 @@ void CS_Step::LoadMovement(iPoint destination, int speed, const std::string& dir
 			direction = NO_DIR;
 		}
 
+		//Set the same origin as the linked element
 		origin = img->GetPos();
+
+		//Set the destination that will reach the linked element
 		dest = destination;
+
+		//Set the movement speed
 		mov_speed = speed;
 
 		LOG("Movement Loaded-> oX:%i oY:%i dX:%i dY:%i speed:%i dir:%i", origin.x, origin.y, dest.x, dest.y, speed, direction);
@@ -649,6 +642,8 @@ void CS_Step::LoadMovement(iPoint destination, int speed, const std::string& dir
 bool CS_Step::DoMovement(float dt)
 {
 	iPoint curr_pos;
+
+	//Switch case for different directions of movement
 	if (element->GetType() == CS_IMAGE)
 	{
 		CS_Image* image = static_cast<CS_Image*>(element);
@@ -672,6 +667,7 @@ bool CS_Step::DoMovement(float dt)
 		curr_pos = image->GetPos();
 	}
 
+	//Check if the action is completed to finish the step
 	CheckMovementCompleted(curr_pos);
 
 	LOG("Step %i Moving %s X:%i Y:%i", n, element->name.c_str(), curr_pos.x, curr_pos.y);
@@ -721,6 +717,7 @@ bool CS_Step::CheckMovementCompleted(iPoint curr_pos)
 
 void CS_Step::Play()
 {
+	//Differentiation between Play Music / Play SoundFx
 	if (element->GetType() == CS_MUSIC)
 	{
 		CS_Music* mus= static_cast<CS_Music*>(element);
@@ -869,7 +866,6 @@ uint CS_SoundFx::GetLoops() const
 CS_Text::CS_Text(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos, const char* txt):
 	CS_Element(type, n, name, active, path)
 {
-	//App->gui->CreateText(GANONF, string, 29, { position.x + 10, 0 }, 30, { 255,255,255,255 }, false);
 	text = App->gui->CreateText(GANONF, txt, 29, pos, 30, { 255,255,255,255 }, false);
 	text->Visible(active);
 }
@@ -894,19 +890,27 @@ Text* CS_Text::GetText() const
 CS_NPC::CS_NPC(CS_Type type, int n, const char* name, bool active, const char* path, iPoint pos):
 	CS_Element(type, n, name, active, path)
 {
-	//App->entity_elements->CreateEntity();
 }
 
 CS_NPC::~CS_NPC()
 {
 }
 
-SceneElement* CS_NPC::GetEntity() const
+SceneElement* CS_NPC::GetEntity(uint id) const
 {
+	//Iterate the scene entities list to find the correct entity (with the same id as the argument)
+	/*for (std::list<Entity*>::iterator it = entities.begin(); it != entities.end(); it++)
+	{
+		if(it._Ptr->_MyVal->id == id)
+		{
+			return it._Ptr->_MyVal;
+		}
+	}*/
 	return nullptr;
 }
 
-void CS_NPC::SetEntity(SceneElement* e)
+void CS_NPC::LinkEntity(SceneElement* e)
 {
+	//entity = GetEntity(id); Set the pointer to the entity of the game to take control of it
 }
 // ------------------------------------------------------
