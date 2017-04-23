@@ -262,10 +262,13 @@ Here are few examples to implement:
 ![](https://raw.githubusercontent.com/Jordior97/2D-Cutscene-Manager-/master/CutsceneManager.png)
 
 # FURTHER READING & WATCHING
-https://en.wikipedia.org/wiki/Cutscene
-https://www.youtube.com/watch?v=oOhXBcmLq2M
-https://www.reddit.com/r/gamedev/comments/1x3o9o/how_should_i_go_about_adding_unique_events/
-https://www.reddit.com/r/gamedev/comments/1jjxrk/how_do_you_handle_cut_scenes_and_scripting_systems/
+<https://en.wikipedia.org/wiki/Cutscene>
+
+<https://www.youtube.com/watch?v=oOhXBcmLq2M>
+
+<https://www.reddit.com/r/gamedev/comments/1x3o9o/how_should_i_go_about_adding_unique_events/>
+
+<https://www.reddit.com/r/gamedev/comments/1jjxrk/how_do_you_handle_cut_scenes_and_scripting_systems/>
 
 # ABOUT ME
 Hello, I'm Jordi Oña, and I'm studying a Videogames Design and Developement Degree in Terrassa, at the CITM centre.
