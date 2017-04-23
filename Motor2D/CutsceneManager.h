@@ -222,13 +222,12 @@ public:
 	// Called when before render is available
 	bool Awake(pugi::xml_node&);
 
-	// Called before the first frame
-	bool Start();
 
 	// Called each loop iteration
 	bool Update(float dt);
 
 	//Active a cutscene when an event triggers it
+	bool LoadCutscene(uint id);
 	bool StartCutscene(uint id);
 	bool FinishCutscene();
 
@@ -244,7 +243,6 @@ private:
 
 	pugi::xml_node LoadXML(pugi::xml_document& config_file, std::string file) const;
 
-	std::list<Cutscene*> cutscenes;			//container with all cutscenes
 	std::list<std::string> paths;			//container with names of all paths of the cutscenes
 	Cutscene* active_cutscene = nullptr;	//To know wich cutscene is active
 };
