@@ -200,6 +200,8 @@ public:
 	uint GetID() const;
 	CS_Element* GetElement(const char* name);
 	bool isFinished() const;
+	uint GetNumElements();
+	uint GetNumSteps();
 	//----------------------------
 
 	std::string name;						//Name of the cutscenes

@@ -107,7 +107,7 @@ bool j1SceneIntro::PostUpdate()
 			if (main_menu->id_selected == 1)
 			{
 				//TODO 3: Start the IntroCutscene by passing its ID (call the correct function of the Cutscene Manager)
-				App->cs_manager->StartCutscene(1);
+				App->cs_manager->StartCutscene(0);
 
 				//Uncomment this when TODO 3 is done.
 				App->scene->ingame = true;

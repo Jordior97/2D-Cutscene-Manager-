@@ -39,7 +39,6 @@ bool j1CutSceneManager::Awake(pugi::xml_node& config)
 		ret = true;
 
 		//TODO 2: fill the paths list with the names of the config.xml file. 
-		//Load all path names in a list to access the concrete cutscene in the future.
 		for (pugi::xml_node temp = config.child("file"); temp != NULL; temp = temp.next_sibling())
 		{
 			paths.push_back(temp.attribute("file").as_string(""));
@@ -125,7 +124,7 @@ bool j1CutSceneManager::LoadCutscene(uint id)
 			//Set the active_scene pointer to the current scene -------------------------
 			active_cutscene = temp_cutscene;
 
-			LOG("Cutscene '%s' loaded", temp_cutscene->name.c_str());
+			LOG("Cutscene '%s' loaded with %i elements and %i steps.", temp_cutscene->name.c_str(), temp_cutscene->GetNumElements(),temp_cutscene->GetNumSteps());
 			break;
 
 		}
@@ -161,6 +160,7 @@ bool j1CutSceneManager::StartCutscene(uint id)
 
 	if (active_cutscene != nullptr)
 	{
+		//TODO 9.2: Uncomment this and enjoy :)
 		//Start the triggered cutscene
 		active_cutscene->Start();
 
@@ -169,9 +169,10 @@ bool j1CutSceneManager::StartCutscene(uint id)
 
 		LOG("%s cutscene activated", active_cutscene->name.c_str());
 	}
+
 	else
 	{
-		LOG("Cutscene not found");
+		LOG("Cutscene not activated.");
 	}
 
 	return true;
@@ -188,14 +189,14 @@ bool j1CutSceneManager::FinishCutscene()
 		{
 			LOG("%s cutscene deactivated", active_cutscene->name.c_str());
 			
-			//TODO 10: Load the destination map of the cutscene (if it has stored a map_id when accessed to the XML file (map_id > -1)).
+			//TODO 9.1: Load the destination map of the cutscene (if it has stored a map_id when accessed to the XML file (map_id > -1)).
 			//Do this by calling the appropiate function of the intro scene.
 			if (active_cutscene->map_id > -1) //Load the assigned map if the cutscene has a map id
 			{
 				App->intro->LoadNewMap(active_cutscene->map_id);
 			}
 
-			//TODO 11: Clear the cutscene and set active_cutsene pointer to nullptr.
+			//TODO 10: Clear the cutscene and set active_cutsene pointer to nullptr.
 			active_cutscene->ClearScene(); //Clear elements and steps lists
 			active_cutscene = nullptr;
 
@@ -299,6 +300,16 @@ bool Cutscene::isFinished() const
 	return finished;
 }
 
+uint Cutscene::GetNumElements()
+{
+	return elements.size();
+}
+
+uint Cutscene::GetNumSteps()
+{
+	return steps.size();
+}
+
 Cutscene::Cutscene()
 {
 }
@@ -327,7 +338,7 @@ bool Cutscene::Update(float dt)
 	{
 		CS_Step* step = *temp;
 
-		//TODO 7: Init the step if its start time has been reached (Use the cutscene timer to check the current time)
+		//TODO 7: Start the step if its start time has been reached (Use the cutscene timer to check the current time)
 		//This function will be called only one time, so you will ned 3 conditions: 
 		// 1) if the step isn't active
 		// 2) if the step isn't finished.
