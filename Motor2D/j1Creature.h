@@ -5,9 +5,11 @@
 #include "SceneElements.h"
 #include "SDL/include/SDL_rect.h"
 #include "j1Map.h"
+#include "j1Timer.h"
 #include "time.h"
 
-// ---------------------------------------------------
+class j1Timer;
+
 class Creature : public SceneElement
 {
 public:
@@ -35,7 +37,7 @@ public:
 	int hp = 0;
 	bool walking = false;
 	int attack = 0;
-	float chase_speed;
+	float chase_speed = 0;
 
 	//COMBAT STATS
 	int radar = 0;
@@ -43,11 +45,11 @@ public:
 
 	//COLLISIONS
 	Collider* collision_feet = nullptr;
-	j1Timer orient_time;
 
 	Direction dir_hit;
 	iPoint prev_position;
 	j1Timer knockback_time;
+	j1Timer orient_time;
 
 protected:
 	uint speed; 
